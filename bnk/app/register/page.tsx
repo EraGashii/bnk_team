@@ -1,4 +1,3 @@
-
 "use client"
 
 import { Link } from 'lucide-react';
@@ -20,6 +19,15 @@ import {
 
 // Define the schema for validation
 const formSchema = z.object({
+
+  name: z.string().min(2, {
+    message: "Name must be longer than 2 characters",
+  }).max(66),
+
+  surname: z.string().min(2, {
+    message: "Surname must be longer than 2 characters",
+  }).max(66),
+
   email: z.string().min(5, {
     message: "Email must be longer than 5 characters",
   }).max(66),
@@ -39,20 +47,19 @@ export default function Home() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name: "",
+      surname: "",
       email: "",
       password: "",
     },
   });
 
   return (
-    <main className="h-screen flex items-center justify-center p-10 rounded-md">
+    <main className="bg-green-600 h-screen flex items-center justify-center p-10 rounded-md">
       {/* Form wrapper */}
-      <div className="h-full bg-bgcolor box-anim flex items-center justify-center flex-col px-4 py-10 md:px-10 rounded-xl border-actioncolor">
+      <div className="w-full h-full bg-white box-anim flex items-center justify-center flex-col px-4 py-10 md:px-10 rounded-xl">
         <div className="my-4">
-          <h1 className="text-3xl font-semibold">Login</h1>
-          <p className="mt-2 text-xs text-slate-400">
-            See Your Growth and get consulting growth
-          </p>
+          <h1 className="text-3xl font-semibold">Register</h1>
         </div>
 
         {/* Form component using Shadcn UI */}
@@ -62,8 +69,60 @@ export default function Home() {
               className="flex items-center w-full gap-4 px-12 mb-4 bg-transparent rounded-full"
               variant="outline"
             >
-             Dont have an account? Sign Up
+             Have an account? Log-in
             </Button> 
+
+            {/* Password Input Field */}
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel htmlFor="name">Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="mt-2 bg-transparent rounded-full"
+                      id="name"
+                      type="name"
+                      placeholder="Name"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+
+            <FormField
+              control={form.control}
+              name="surname"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel htmlFor="surname">Surname</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="mt-2 bg-transparent rounded-full"
+                      id="surname"
+                      type="surname"
+                      placeholder="Surname"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+
+
+
+
+
+
+
+
+
 
             {/* Email Input Field */}
             <FormField
@@ -86,7 +145,8 @@ export default function Home() {
               )}
             />
 
-            {/* Password Input Field */}
+
+
             <FormField
               control={form.control}
               name="password"
@@ -107,12 +167,13 @@ export default function Home() {
               )}
             />
 
+
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full mt-6 bg-actioncolor rounded-full hover:bg-indigo-700"
+              className="w-full mt-6 bg-indigo-600 rounded-full hover:bg-indigo-700"
             >
-              Login
+              Register
             </Button>
           </form>
 
