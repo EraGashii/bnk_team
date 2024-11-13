@@ -34,7 +34,6 @@ jspm_packages
 .npm
 
 # Database Config File
-/api/config/config.json
 
 # Environment Files
 *.env
