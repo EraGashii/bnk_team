@@ -1,7 +1,7 @@
 "use client"
 
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
- 
+import { Calendar, Home, Icon, Inbox, Search, Settings, User } from "lucide-react"; // Add User icon
+
 import {
   Sidebar,
   SidebarContent,
@@ -11,22 +11,25 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+  SidebarFooter
+} from "@/components/ui/sidebar";
+
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 const items = [
   {
     title: "Home",
-    url: "#",
+    url: "/home",
     icon: Home,
   },
   {
-    title: "Inbox",
+    title: "My Cards",
     url: "#",
     icon: Inbox,
   },
   {
-    title: "Calendar",
-    url: "#",
+    title: "Transactions",
+    url: "/home/transactions",
     icon: Calendar,
   },
   {
@@ -39,7 +42,7 @@ const items = [
     url: "#",
     icon: Settings,
   },
-]
+];
 
 export function AppSidebar() {
   return (
@@ -59,10 +62,38 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+
+              
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+
+      <SidebarFooter>
+        {/* Username dropdown with icon */}
+        <SidebarMenuItem>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <SidebarMenuButton>
+                      <User className="mr-2" /> {/* Add the User icon here */}
+                      Username
+                    </SidebarMenuButton>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent side="bottom" className="w-[--radix-popper-anchor-width]">
+                    <DropdownMenuItem>
+                      <span>Account</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <span>Billing</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <span>Sign out</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </SidebarMenuItem>
+      </SidebarFooter>
     </Sidebar>
-  )
+  );
 }
