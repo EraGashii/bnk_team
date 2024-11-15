@@ -32,6 +32,9 @@ const formSchema = z.object({
 function onSubmit(values: z.infer<typeof formSchema>) {
   // This will be type-safe and validated
   console.log(values);
+  
+      window.location.href = "/home";
+
 }
 
 export default function Home() {
@@ -61,6 +64,9 @@ export default function Home() {
             <Button
               className="flex items-center w-full gap-4 px-12 mb-4 bg-transparent rounded-full"
               variant="outline"
+              onClick={() => {
+                window.location.href = "/register";
+              }}
             >
              Dont have an account? Sign Up
             </Button> 
@@ -108,7 +114,7 @@ export default function Home() {
             />
 
             {/* Submit Button */}
-            <Button
+            <Button 
               type="submit"
               className="w-full mt-6 bg-actioncolor rounded-full hover:bg-indigo-700"
             >

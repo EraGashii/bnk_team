@@ -24,7 +24,7 @@ const items = [
   },
   {
     title: "My Cards",
-    url: "#",
+    url: "/home/cards",
     icon: Inbox,
   },
   {
@@ -45,6 +45,12 @@ const items = [
 ];
 
 export function AppSidebar() {
+
+  const handleSignOut = () => {
+        window.location.href = "http://localhost:3000/";
+       }
+  
+
   return (
     <Sidebar>
       <SidebarContent>
@@ -87,7 +93,7 @@ export function AppSidebar() {
                     <DropdownMenuItem>
                       <span>Billing</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleSignOut}>
                       <span>Sign out</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>

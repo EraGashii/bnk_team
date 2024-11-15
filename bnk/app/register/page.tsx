@@ -68,8 +68,15 @@ export default function Home() {
             <Button
               className="flex items-center w-full gap-4 px-12 mb-4 bg-transparent rounded-full"
               variant="outline"
+             
+              onClick={() => {
+                window.location.href = "http://localhost:3000";
+              }}
+
             >
+              
              Have an account? Log-in
+             
             </Button> 
 
             {/* Password Input Field */}
@@ -172,7 +179,13 @@ export default function Home() {
             <Button
               type="submit"
               className="w-full mt-6 bg-indigo-600 rounded-full hover:bg-indigo-700"
+              
+              onClick={form.handleSubmit((values) => {
+              console.log(values);
+              window.location.href = "http://localhost:3000";
+            })}
             >
+              
               Register
             </Button>
           </form>
