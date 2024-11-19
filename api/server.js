@@ -14,14 +14,10 @@ app.use(cors());
 
 // User Router
 const userRouter = require('./routes/UserRoute');
-app.use('/user', userRouter);
+app.use('/', userRouter);
 
 
-const transactionRouter = require('./routes/TransactionRoute');
-app.use('/transactions', transactionRouter);
-
-
-db.sequelize.sync().then(() => {
+db.sequelize.sync().then( () => {
   app.listen(PORT, 'localhost', () => {
     console.log(">Listening on port 3001");
 

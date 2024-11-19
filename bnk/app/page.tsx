@@ -32,8 +32,8 @@ const formSchema = z.object({
 function onSubmit(values: z.infer<typeof formSchema>) {
   // This will be type-safe and validated
   console.log(values);
-
-  window.location.href = "/home";
+  
+      window.location.href = "/home";
 
 }
 
@@ -50,9 +50,12 @@ export default function Home() {
   return (
     <main className="h-screen flex items-center justify-center p-10 rounded-md">
       {/* Form wrapper */}
-      <div className="h-full bg-white box-anim flex items-center justify-center flex-col px-4 py-10 md:px-10 rounded-xl border-actioncolor">
+      <div className="h-full bg-bgcolor box-anim flex items-center justify-center flex-col px-4 py-10 md:px-10 rounded-xl border-actioncolor">
         <div className="my-4">
-          <h1 className="text-black text-3xl font-semibold">Sign In</h1>
+          <h1 className="text-3xl font-semibold">Login</h1>
+          <p className="mt-2 text-xs text-slate-400">
+            See Your Growth and get consulting growth
+          </p>
         </div>
 
         {/* Form component using Shadcn UI */}
@@ -65,8 +68,8 @@ export default function Home() {
                 window.location.href = "/register";
               }}
             >
-              Dont have an account? Sign Up
-            </Button>
+             Dont have an account? Sign Up
+            </Button> 
 
             {/* Email Input Field */}
             <FormField
@@ -77,7 +80,7 @@ export default function Home() {
                   <FormLabel htmlFor="email">Email</FormLabel>
                   <FormControl>
                     <Input
-                      className="p-5 mt-2 mb-4 bg-transparent rounded-full"
+                      className="mt-2 mb-4 bg-transparent rounded-full"
                       id="email"
                       type="email"
                       placeholder="Email"
@@ -98,7 +101,7 @@ export default function Home() {
                   <FormLabel htmlFor="password">Password</FormLabel>
                   <FormControl>
                     <Input
-                      className="p-5 mt-2 bg-transparent rounded-full"
+                      className="mt-2 bg-transparent rounded-full"
                       id="password"
                       type="password"
                       placeholder="Password"
@@ -111,9 +114,9 @@ export default function Home() {
             />
 
             {/* Submit Button */}
-            <Button
+            <Button 
               type="submit"
-              className="w-full mt-6 text-black bg-actioncolor rounded-full hover:bg-indigo-700"
+              className="w-full mt-6 bg-actioncolor rounded-full hover:bg-indigo-700"
             >
               Login
             </Button>
@@ -122,7 +125,7 @@ export default function Home() {
         </Form>
 
         {/* Footer */}
-        <p className="mt-4 text-xs text-slate-300">
+        <p className="mt-4 text-xs text-slate-200">
           @2024 All rights reserved
         </p>
       </div>
