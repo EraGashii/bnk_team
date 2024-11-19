@@ -47,9 +47,9 @@ const items = [
 export function AppSidebar() {
 
   const handleSignOut = () => {
-        window.location.href = "http://localhost:3000/";
-       }
-  
+    window.location.href = "http://localhost:3000/";
+  }
+
 
   return (
     <Sidebar>
@@ -69,7 +69,7 @@ export function AppSidebar() {
                 </SidebarMenuItem>
               ))}
 
-              
+
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -79,27 +79,29 @@ export function AppSidebar() {
       <SidebarFooter>
         {/* Username dropdown with icon */}
         <SidebarMenuItem>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <SidebarMenuButton>
-                      <User className="mr-2" /> {/* Add the User icon here */}
-                      Username
-                    </SidebarMenuButton>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent side="bottom" className="w-[--radix-popper-anchor-width]">
-                    <DropdownMenuItem>
-                      <span>Account</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <span>Billing</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleSignOut}>
-                      <span>Sign out</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </SidebarMenuItem>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <SidebarMenuButton>
+                <User className="mr-2" /> {/* Add the User icon here */}
+                Username
+              </SidebarMenuButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="bottom" className="w-[--radix-popper-anchor-width]">
+              <DropdownMenuItem>
+                <span>Account</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <span>Billing</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleSignOut}>
+                <span>Sign out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </SidebarMenuItem>
       </SidebarFooter>
     </Sidebar>
   );
 }
+
+export default AppSidebar;
