@@ -55,7 +55,7 @@ export default function Home() {
   });
 
   return (
-    <main className="bg-green-600 h-screen flex items-center justify-center p-10 rounded-md">
+    <main className="h-screen flex items-center justify-center p-10 rounded-md">
       {/* Form wrapper */}
       <div className="w-full h-full bg-white box-anim flex items-center justify-center flex-col px-4 py-10 md:px-10 rounded-xl">
         <div className="my-4">
@@ -68,16 +68,16 @@ export default function Home() {
             <Button
               className="flex items-center w-full gap-4 px-12 mb-4 bg-transparent rounded-full"
               variant="outline"
-             
+
               onClick={() => {
                 window.location.href = "http://localhost:3000";
               }}
 
             >
-              
-             Have an account? Log-in
-             
-            </Button> 
+
+              Have an account? Log-in
+
+            </Button>
 
             {/* Password Input Field */}
             <FormField
@@ -179,13 +179,13 @@ export default function Home() {
             <Button
               type="submit"
               className="w-full mt-6 bg-indigo-600 rounded-full hover:bg-indigo-700"
-              
+
               onClick={form.handleSubmit((values) => {
-              console.log(values);
-              window.location.href = "http://localhost:3000";
-            })}
+                console.log(values);
+                window.location.href = "http://localhost:3000";
+              })}
             >
-              
+
               Register
             </Button>
           </form>

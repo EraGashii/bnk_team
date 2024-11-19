@@ -1,25 +1,24 @@
 const express = require('express');
-const db = require('./models/');
 const cors = require('cors');
-const app = express();
+const db = require('./models');
 
+const app = express();
 const PORT = 3001;
 
-
-// Parse JSON request
+// Middleware
 app.use(express.json());
-
-// Whitelist aPI
 app.use(cors());
 
-// User Router
+// Routers
 const userRouter = require('./routes/UserRoute');
-app.use('/', userRouter);
+const transactionRouter = require('./routes/TransactionRoute');
 
+app.use('/user', userRouter);
+app.use('/transactions', transactionRouter);
 
-db.sequelize.sync().then( () => {
-  app.listen(PORT, 'localhost', () => {
-    console.log(">Listening on port 3001");
-
-  })
-})
+// Sync and Start Server
+db.sequelize.sync().then(() => {
+  app.listen(PORT, () => {
+    console.log(`> Listening on port ${PORT}`);
+  });
+});
