@@ -1,14 +1,29 @@
 "use client";
 
-import { SidebarProvider } from "@/components/ui/sidebar"; // Import SidebarProvider
-import { AppSidebar } from "@/components/ui/app-sidebar"; // Import the sidebar
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/ui/app-sidebar";
 
-export default function TransactionsPage() {
-    return (
-        <SidebarProvider> {/* Wrap the layout with SidebarProvider */}
-            <AppSidebar /> {/* Sidebar added here */}
-           
-        </SidebarProvider>
-      );
+export default function CardPage() {
+  return (
+    <SidebarProvider>
+      <div className="flex min-h-screen">
+        {/* Sidebar */}
+        <AppSidebar />
+
+        <SidebarTrigger />
+
+        {/* Main content */}
+        <div className="flex-grow p-4">
+
+          <header className="flex justify-between items-center mb-4">
+            <h1 className="text-2xl font-bold">Cards Page</h1>
+          </header>
+
+          <main>
+            <div>Test</div>
+          </main>
+        </div>
+      </div>
+    </SidebarProvider>
+  );
 }
- 

@@ -45,17 +45,11 @@ const items = [
 ];
 
 export function AppSidebar() {
-
-  const handleSignOut = () => {
-    window.location.href = "http://localhost:3000/";
-  }
-
-
   return (
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Sistemi Bankar</SidebarGroupLabel>
+          <SidebarGroupLabel>BNK</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
@@ -93,7 +87,7 @@ export function AppSidebar() {
               <DropdownMenuItem>
                 <span>Billing</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleSignOut}>
+              <DropdownMenuItem >
                 <span>Sign out</span>
               </DropdownMenuItem>
             </DropdownMenuContent>

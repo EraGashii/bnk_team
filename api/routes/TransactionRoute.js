@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const authenticateMiddleware = require('../middleware/authMiddleware');
 const { User, Transaction } = require('../models');
 
 // Get all transactions
@@ -56,5 +57,39 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
+
+router.post('/deposit', authenticateMiddleware, async (req, res) => {
+  const { amount } = req.body;
+
+  try {
+    const userId = req.user.id;
+
+    if (amount <= 0) {
+      return res.status(400).json({error: 'Deposit amount cannot be a negative number or 0'});
+    }
+
+    const user = await User.findByPk(userId);
+    if(!user) {
+      return res.status(400).json({error: 'User ID not found'});
+    }
+
+    user.balance += parseFloat(amount);
+    await user.save();
+
+
+    res.status(200).json({
+      message: 'Deposit was successful',
+      balance: user.balance
+    });
+
+
+  }
+  catch (err) {
+    console.error('Error during deposit, server?', err);
+    res.status(501).json({err: 'Internal Server Error'});
+  }
+})
 
 module.exports = router;
