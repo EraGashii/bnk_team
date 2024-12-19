@@ -1,48 +1,27 @@
 'use strict';
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Transactions', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER,
-      },
+      id: { allowNull: false, autoIncrement: true, primaryKey: true, type: Sequelize.INTEGER },
       senderId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: {
-          model: 'User',
-          key: 'id',
-        },
+        references: { model: 'Users', key: 'id' },
         onDelete: 'CASCADE',
       },
       receiverId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: {
-          model: 'User',
-          key: 'id',
-        },
+        references: { model: 'Users', key: 'id' },
         onDelete: 'CASCADE',
       },
-      amount: {
-        type: Sequelize.FLOAT,
-        allowNull: false,
-      },
+      amount: { type: Sequelize.FLOAT, allowNull: false },
       status: {
         type: Sequelize.ENUM('pending', 'completed', 'failed'),
         defaultValue: 'pending',
       },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
+      createdAt: { allowNull: false, type: Sequelize.DATE },
+      updatedAt: { allowNull: false, type: Sequelize.DATE },
     });
   },
 
