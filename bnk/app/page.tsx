@@ -14,7 +14,7 @@ export default function HomePage() {
             <Link href="/" className="text-white hover:underline">
               Online banking
             </Link>
-            <Link href="/" className="text-white hover:underline">
+            <Link href="/AboutUs" className="text-white hover:underline">
               About us
             </Link>
             <Link href="/ContactUs" className="text-white hover:underline">
@@ -44,7 +44,7 @@ export default function HomePage() {
           objectFit="cover"
           className="mix-blend-overlay"
         />
-        <div className="absolute inset-0 bg-[url('../images/bank.jpeg')] bg-cover bg-center">
+        <div className="absolute inset-0 bg-[url('../image/bank.jpeg')] bg-cover bg-center">
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
             <h2 className="text-4xl font-bold text-white md:text-6xl">
               Welcome to MyBank
@@ -100,13 +100,13 @@ export default function HomePage() {
         <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 items-center gap-12">
           {/* Left Section - App Image */}
           <div className="flex justify-center">
-            <Image
-              src="/images/bank.jpeg"
-              alt="MyBank App"
-              width={350}
-              height={700}
-              className="rounded-lg shadow-lg"
-            />
+          <img
+        src="https://images.pexels.com/photos/29107443/pexels-photo-29107443/free-photo-of-elegant-vienna-architecture-black-and-white-photo.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+        alt="Elegant Vienna Architecture"
+        width={1260}
+        height={750}
+        className="rounded-lg shadow-lg"
+      />
           </div>
           {/* Right Section - Content */}
           <div>
@@ -148,7 +148,7 @@ export default function HomePage() {
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-white-400 hover:underline">
+                <Link href="/AboutUs" className="text-white-400 hover:underline">
                   About Us
                 </Link>
               </li>
