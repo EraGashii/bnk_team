@@ -2,7 +2,11 @@ const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const db = require('./models');
+
 // const authenticateToken = require('./middleware/auth'); // Import the authentication middleware
+
+const authenticateToken = require('./middleware/auth'); // Import the authentication middleware
+
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -20,6 +24,7 @@ const userRouter = require('./routes/userRoutes');
 const transactionRouter = require('./routes/transactionsRoutes');
 
 // Apply authentication middleware globally (except for public routes)
+
 // app.use((req, res, next) => {
 //   // Skip authentication for public routes like login and register
 //   if (['/user/login', '/user/register'].includes(req.path)) {
@@ -29,6 +34,16 @@ const transactionRouter = require('./routes/transactionsRoutes');
 // });
 app.use((req, res, next) => {
   return next(); // Skip authentication for all routes
+});
+
+
+
+app.use((req, res, next) => {
+  // Skip authentication for public routes like login and register
+  if (['/user/login', '/user/register'].includes(req.path)) {
+    return next();
+  }
+  authenticateToken(req, res, next);
 });
 
 

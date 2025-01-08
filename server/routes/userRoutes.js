@@ -3,10 +3,10 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const { User } = require('../models');
 const jwt = require('jsonwebtoken');
-// const authenticateToken = require('../middleware/auth');
+const authenticateToken = require('../middleware/auth'); // Single declaration
 
-// All users (for testing only, remove in production)
-router.get('/', async (req, res) => {
+// Get all users (for testing only, remove in production)
+router.get('/', authenticateToken, async (req, res) => {
   try {
     const listAllUsers = await User.findAll();
     res.json(listAllUsers);
@@ -19,6 +19,10 @@ router.get('/', async (req, res) => {
 // Register API
 router.post('/register', async (req, res) => {
   const { name, surname, email, password } = req.body;
+
+  if (!name || !surname || !email || !password) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
 
   try {
     const existingUser = await User.findOne({ where: { email } });
@@ -35,7 +39,7 @@ router.post('/register', async (req, res) => {
       password: hashedPassword,
     });
 
-    res.status(201).json(newUser);
+    res.status(201).json({ id: newUser.id, name: newUser.name, email: newUser.email });
   } catch (error) {
     console.error('Error occurred during registration:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -46,6 +50,10 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
+  }
+
   try {
     const user = await User.findOne({ where: { email } });
     if (!user) {
@@ -54,12 +62,12 @@ router.post('/login', async (req, res) => {
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ error: 'Invalid password' });
+      return res.status(401).json({ error: 'Invalid email or password' });
     }
 
     const token = jwt.sign(
       { id: user.id, email: user.email },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET || 'default_secret', // Use default for testing if not set
       { expiresIn: '1h' }
     );
 

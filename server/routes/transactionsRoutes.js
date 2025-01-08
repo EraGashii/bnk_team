@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const { User, Transaction } = require('../models');
-// const authenticateToken = require('../middleware/auth');
+
+const authenticateToken = require('../middleware/auth');
 
 // Apply middleware to all routes in this file
-// router.use(authenticateToken);
+router.use(authenticateToken);
+
 
 // Get all transactions (for the authenticated user)
 router.get('/', async (req, res) => {
