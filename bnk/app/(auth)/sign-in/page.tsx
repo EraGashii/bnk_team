@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
+import { ThemeToggle } from '@/components/ThemeButtonTrigger'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -22,18 +23,22 @@ export default function LoginPage() {
           objectFit="cover"
           className="mix-blend-overlay"
         />
+
         <div className="absolute inset-0 bg-primary/60" />
+
         <div className="absolute inset-0 flex items-center justify-center p-8">
+
           <h1 className="text-4xl font-bold text-white md:text-6xl">Welcome to MyBank</h1>
         </div>
       </div>
       <div className="flex flex-1 items-center justify-center p-8 md:w-1/2">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
-            <h2 className="mt-6 text-3xl font-bold text-gray-900">Sign in to your account</h2>
+            <h2 className="mt-6 text-3xl font-bold ">Sign in to your account</h2>
           </div>
           <form className="mt-8 space-y-6">
             <div className="space-y-4 rounded-md shadow-sm">
+
               <div>
                 <Label htmlFor="email-address">Email address</Label>
                 <Input id="email-address" name="email" type="email" autoComplete="email" required className="mt-1" />
@@ -76,6 +81,8 @@ export default function LoginPage() {
                 Sign up
               </Link>
             </p>
+
+      <ThemeToggle />
           </div>
         </div>
       </div>
