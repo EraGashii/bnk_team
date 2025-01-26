@@ -1,13 +1,12 @@
-'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Transaction = sequelize.define(
     'Transaction',
     {
-      senderId: {
+      senderCardId: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      receiverId: {
+      receiverCardId: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
@@ -15,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.FLOAT,
         allowNull: false,
         validate: {
-          min: 0.01, // Minimum transaction amount
+          min: 5.00, // Minimum transaction amount
         },
       },
       status: {
@@ -27,8 +26,8 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Transaction.associate = function (models) {
-    Transaction.belongsTo(models.User, { as: 'Sender', foreignKey: 'senderId' });
-    Transaction.belongsTo(models.User, { as: 'Receiver', foreignKey: 'receiverId' });
+    Transaction.belongsTo(models.CreditCard, { as: 'SenderCard', foreignKey: 'senderCardId' });
+    Transaction.belongsTo(models.CreditCard, { as: 'ReceiverCard', foreignKey: 'receiverCardId' });
   };
 
   return Transaction;

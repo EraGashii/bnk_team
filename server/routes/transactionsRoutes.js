@@ -1,24 +1,25 @@
 const express = require('express');
 const router = express.Router();
-const { User, Transaction } = require('../models');
-
+const { User, CreditCard, Transaction } = require('../models');
 const authenticateToken = require('../middleware/auth');
 
 // Apply middleware to all routes in this file
 router.use(authenticateToken);
-
 
 // Get all transactions (for the authenticated user)
 router.get('/', async (req, res) => {
   try {
     const transactions = await Transaction.findAll({
       where: {
-        [Op.or]: [{ senderId: req.user.id }, { receiverId: req.user.id }],
+        [Op.or]: [
+          { '$SenderCard.userId$': req.user.id },
+          { '$ReceiverCard.userId$': req.user.id }
+        ]
       },
       include: [
-        { model: User, as: 'Sender', attributes: ['id', 'name', 'email'] },
-        { model: User, as: 'Receiver', attributes: ['id', 'name', 'email'] },
-      ],
+        { model: CreditCard, as: 'SenderCard', include: [{ model: User, as: 'User' }] },
+        { model: CreditCard, as: 'ReceiverCard', include: [{ model: User, as: 'User' }] }
+      ]
     });
     res.json(transactions);
   } catch (error) {
@@ -29,32 +30,32 @@ router.get('/', async (req, res) => {
 
 // Create a new transaction
 router.post('/', async (req, res) => {
-  const { senderId, receiverId, amount } = req.body;
+  const { senderCardId, receiverCardId, amount } = req.body;
 
   try {
-    if (senderId === receiverId) {
+    if (senderCardId === receiverCardId) {
       return res.status(400).json({ error: 'Sender and receiver cannot be the same' });
     }
 
-    const sender = await User.findByPk(senderId);
-    const receiver = await User.findByPk(receiverId);
+    const senderCard = await CreditCard.findByPk(senderCardId);
+    const receiverCard = await CreditCard.findByPk(receiverCardId);
 
-    if (!sender || !receiver) {
-      return res.status(404).json({ error: 'Sender or Receiver not found' });
+    if (!senderCard || !receiverCard) {
+      return res.status(404).json({ error: 'Sender or Receiver card not found' });
     }
 
-    if (sender.balance < amount) {
+    if (senderCard.balance < amount) {
       return res.status(400).json({ error: 'Insufficient funds' });
     }
 
     // Update balances
-    await sender.update({ balance: sender.balance - amount });
-    await receiver.update({ balance: receiver.balance + amount });
+    await senderCard.update({ balance: senderCard.balance - amount });
+    await receiverCard.update({ balance: receiverCard.balance + amount });
 
     // Create the transaction
     const transaction = await Transaction.create({
-      senderId,
-      receiverId,
+      senderCardId,
+      receiverCardId,
       amount,
       status: 'completed',
     });

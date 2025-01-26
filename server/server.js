@@ -3,7 +3,6 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const db = require('./models');
 
-// const authenticateToken = require('./middleware/auth'); // Import the authentication middleware
 
 const authenticateToken = require('./middleware/auth'); // Import the authentication middleware
 
@@ -15,8 +14,8 @@ const PORT = process.env.PORT || 3001;
 app.use(express.json()); // Parse JSON bodies
 app.use(cookieParser()); // Parse cookies
 app.use(cors({
-  origin: 'http://localhost:3000', // Update with your frontend's origin
-  credentials: true, // Allow credentials like cookies
+  origin: 'http://localhost:3000', 
+  credentials: true, 
 }));
 
 // Routers
@@ -57,7 +56,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
-// Sync Database and Start Server
 db.sequelize.sync().then(() => {
   app.listen(PORT, () => {
     console.log(`> Listening on port ${PORT}`);

@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-const { User } = require('../models');
+const { User, CreditCard } = require('../models');
 const jwt = require('jsonwebtoken');
-const authenticateToken = require('../middleware/auth'); // Single declaration
+const authenticateToken = require('../middleware/auth');
 
 // Get all users (for testing only, remove in production)
 router.get('/', authenticateToken, async (req, res) => {
@@ -16,37 +16,66 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
-// Register API
+// === 1) Register User & Generate Credit Card ===
 router.post('/register', async (req, res) => {
-  const { name, surname, email, password } = req.body;
+  // Destructure ALL the fields from the body
+  const {
+    name,
+    surname,
+    email,
+    password,
+    address,
+    postalCode,
+    phoneNumber
+  } = req.body;
 
-  if (!name || !surname || !email || !password) {
+  // Basic validation
+  if (!name || !surname || !email || !password || !address || !postalCode || !phoneNumber) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
   try {
+    // Check if user already exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return res.status(400).json({ error: 'Email is already registered' });
     }
 
+    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Create the user record
     const newUser = await User.create({
       name,
       surname,
       email,
       password: hashedPassword,
+      address,
+      postalCode,
+      phoneNumber
     });
 
-    res.status(201).json({ id: newUser.id, name: newUser.name, email: newUser.email });
+    // === 2) Generate Credit Card for the New User ===
+    const generatedCard = await createCreditCardForUser(newUser.id);
+
+    // Return user + card data if you want the frontend to know
+    // Or just return a success message
+    // ONLY FOR TESTING PURPOSES RIGHT NOW, WILL REMOVE LATER
+    res.status(201).json({
+      user: {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email
+      },
+      card: generatedCard
+    });
   } catch (error) {
     console.error('Error occurred during registration:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
-// Login API
+// Login API / Validation
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -67,7 +96,7 @@ router.post('/login', async (req, res) => {
 
     const token = jwt.sign(
       { id: user.id, email: user.email },
-      process.env.JWT_SECRET || 'default_secret', // Use default for testing if not set
+      process.env.JWT_SECRET || 'default_secret',
       { expiresIn: '1h' }
     );
 
@@ -79,3 +108,39 @@ router.post('/login', async (req, res) => {
 });
 
 module.exports = router;
+
+/**
+Generates a CREDIT CARD based on the userID (this is used in the /register API)
+ */
+async function createCreditCardForUser(userId) {
+  const randomCardNumber = generateRandomCardNumber();
+  const expirationDate = generateRandomExpirationDate();
+  const cvv = generateRandomCVV();
+
+  const newCard = await CreditCard.create({
+    cardNumber: randomCardNumber,
+    expirationDate,
+    cvv,
+    userId,          // Attach to the newly created user
+    status: 'pending' // default or override
+  });
+
+  return newCard;
+}
+
+
+// Will make changes to these later also, only for testing right now
+
+function generateRandomCardNumber() {
+  //  a 16-digit random number
+  return '4' + Math.floor(Math.random() * 1000000000000000).toString().padStart(15, '0');
+}
+
+function generateRandomExpirationDate() {
+  
+  return '12/28';
+}
+
+function generateRandomCVV() {
+  return Math.floor(Math.random() * 900 + 100).toString();
+}

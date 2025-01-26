@@ -4,6 +4,9 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
+// Use this later when redirecting to the home page
+// import { motion, AnimatePresence } from 'framer-motion' // Import motion and AnimatePresence
+import { Progress } from '@/components/ui/progress' // Import Progress component
 import { ThemeToggle } from '@/components/ThemeButtonTrigger'
 
 import { Button } from '@/components/ui/button'
@@ -12,6 +15,27 @@ import { Label } from '@/components/ui/label'
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
+  const [progress, setProgress] = useState(0) // State for progress bar
+  const [isLoading, setIsLoading] = useState(false) // State for loading
+
+  const handleSignIn = (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setProgress(0)
+
+    // Simulate a loading process with a progress bar
+    const timer = setInterval(() => {
+      setProgress((oldProgress) => {
+        if (oldProgress === 100) {
+          clearInterval(timer)
+          setIsLoading(false)
+          // Redirect (AFTER LOADING)
+          return 100
+        }
+        return oldProgress + 10
+      })
+    }, 200)
+  }
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
@@ -27,8 +51,7 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-primary/60" />
 
         <div className="absolute inset-0 flex items-center justify-center p-8">
-
-          <h1 className="text-4xl font-bold text-white md:text-6xl">Welcome to MyBank</h1>
+          <h1 className="text-4xl font-bold text-white md:text-6xl">BNK</h1>
         </div>
       </div>
       <div className="flex flex-1 items-center justify-center p-8 md:w-1/2">
@@ -36,9 +59,8 @@ export default function LoginPage() {
           <div className="text-center">
             <h2 className="mt-6 text-3xl font-bold ">Sign in to your account</h2>
           </div>
-          <form className="mt-8 space-y-6">
+          <form onSubmit={handleSignIn} className="mt-8 space-y-6">
             <div className="space-y-4 rounded-md shadow-sm">
-
               <div>
                 <Label htmlFor="email-address">Email address</Label>
                 <Input id="email-address" name="email" type="email" autoComplete="email" required className="mt-1" />
@@ -69,11 +91,15 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <Button type="submit" className="w-full">
-                Sign in
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? 'Signing in...' : 'Sign in'}
               </Button>
             </div>
           </form>
+
+          {/* Progress Bar */}
+          {isLoading && <Progress value={progress} className="w-full" />}
+
           <div className="text-center">
             <p className="mt-2 text-sm text-gray-600">
               Don't have an account?{' '}
@@ -81,12 +107,10 @@ export default function LoginPage() {
                 Sign up
               </Link>
             </p>
-
-      <ThemeToggle />
+            <ThemeToggle />
           </div>
         </div>
       </div>
     </div>
   )
 }
-
