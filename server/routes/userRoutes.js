@@ -113,6 +113,7 @@ module.exports = router;
 Generates a CREDIT CARD based on the userID (this is used in the /register API)
  */
 async function createCreditCardForUser(userId) {
+  console.log('Creating credit card for user with ID:', userId);
   const randomCardNumber = generateRandomCardNumber();
   const expirationDate = generateRandomExpirationDate();
   const cvv = generateRandomCVV();
@@ -124,7 +125,7 @@ async function createCreditCardForUser(userId) {
     userId,          // Attach to the newly created user
     status: 'pending' // default or override
   });
-
+  console.log('Credit Card Created:', newCard); 
   return newCard;
 }
 

@@ -1,56 +1,97 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Image from "next/image"
-import Link from "next/link"
-import { Eye, EyeOff } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import axios from "axios";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Progress } from "@/components/ui/progress"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
 
 export default function SignUpPage() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [step, setStep] = useState(1)
-  const [progress, setProgress] = useState(0)
+  const [showPassword, setShowPassword] = useState(false);
+  const [step, setStep] = useState(1);
+  const [progress, setProgress] = useState(0);
+  const [formData, setFormData] = useState({
+    name: "",
+    surname: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    address: "",
+    postalCode: "",
+    phoneNumber: "",
+  });
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const steps = [
     { title: "Create your account", step: 1 },
     { title: "Enter your details", step: 2 },
     { title: "Finishing Up", step: 3 },
-  ]
+  ];
 
-  const handleFirstFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setProgress(0)
+  const handleInputChange = (e: { target: { name: string; value: string } }) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFirstFormSubmit = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    setError(null);
+    setProgress(0);
+
     const timer = setInterval(() => {
       setProgress((oldProgress) => {
         if (oldProgress === 100) {
-          clearInterval(timer)
-          setStep(2)
-          return 100
+          clearInterval(timer);
+          setStep(2);
+          return 100;
         }
-        return oldProgress + 10
-      })
-    }, 200)
-  }
+        return oldProgress + 10;
+      });
+    }, 200);
+  };
 
-  const handleSecondFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setProgress(0)
-    const timer = setInterval(() => {
-      setProgress((oldProgress) => {
-        if (oldProgress === 100) {
-          clearInterval(timer)
-          setStep(3)
-          return 100
-        }
-        return oldProgress + 10
-      })
-    }, 200)
-  }
+  const handleSecondFormSubmit = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    setError(null);
+
+    try {
+      const response = await axios.post("http://localhost:3001/user/register", {
+        name: formData.name,
+        surname: formData.surname,
+        email: formData.email,
+        password: formData.password,
+        address: formData.address,
+        postalCode: formData.postalCode,
+        phoneNumber: formData.phoneNumber,
+      });
+
+      console.log("Registration successful:", response.data);
+      setSuccessMessage("Registration successful! Your account is under review.");
+      setStep(3); // Move to the final step
+    } catch (err) {
+      let errorMessage = "An error occurred during registration";
+
+      if (axios.isAxiosError(err)) {
+        errorMessage = err.response?.data?.error || err.message || errorMessage;
+      } else if (err instanceof Error) {
+        errorMessage = err.message || errorMessage;
+      }
+
+      console.error("Error during registration:", errorMessage);
+      setError(errorMessage);
+    }
+  };
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
@@ -73,7 +114,11 @@ export default function SignUpPage() {
             <h2 className="mt-6 text-3xl font-bold">Create your account</h2>
           </div>
 
-          {/* Breadcrumb Navigation */}
+          {/* Error Message */}
+          {error && (
+            <div className="text-center text-red-500 font-medium">{error}</div>
+          )}
+
           <div className="relative">
             <div className="flex items-center justify-between">
               {steps.map(({ title, step: stepNumber }, index) => (
@@ -87,9 +132,11 @@ export default function SignUpPage() {
                       <span className="text-white font-medium">{stepNumber}</span>
                     </div>
                     {index < steps.length - 1 && (
-                      <div className={`absolute top-1/2 left-full w-16 h-1 -translate-y-1/2 ${
-                        step > stepNumber ? "bg-primary" : "bg-muted"
-                      }`} />
+                      <div
+                        className={`absolute top-1/2 left-full w-16 h-1 -translate-y-1/2 ${
+                          step > stepNumber ? "bg-primary" : "bg-muted"
+                        }`}
+                      />
                     )}
                   </div>
                   <span
@@ -115,19 +162,18 @@ export default function SignUpPage() {
               >
                 <form onSubmit={handleFirstFormSubmit} className="mt-8 space-y-6">
                   <div className="space-y-4 rounded-md shadow-sm">
-                    {/* First Name Field */}
                     <div>
-                      <Label htmlFor="first-name">First Name</Label>
+                      <Label htmlFor="name">First Name</Label>
                       <Input
-                        id="first-name"
-                        name="first-name"
+                        id="name"
+                        name="name"
                         type="text"
                         autoComplete="given-name"
                         required
                         className="mt-1"
+                        onChange={handleInputChange}
                       />
                     </div>
-
                     <div>
                       <Label htmlFor="surname">Surname</Label>
                       <Input
@@ -137,18 +183,19 @@ export default function SignUpPage() {
                         autoComplete="family-name"
                         required
                         className="mt-1"
+                        onChange={handleInputChange}
                       />
                     </div>
-
                     <div>
-                      <Label htmlFor="email-address">Email address</Label>
+                      <Label htmlFor="email">Email address</Label>
                       <Input
-                        id="email-address"
+                        id="email"
                         name="email"
                         type="email"
                         autoComplete="email"
                         required
                         className="mt-1"
+                        onChange={handleInputChange}
                       />
                     </div>
                     <div>
@@ -160,6 +207,7 @@ export default function SignUpPage() {
                           type={showPassword ? "text" : "password"}
                           autoComplete="new-password"
                           required
+                          onChange={handleInputChange}
                         />
                         <button
                           type="button"
@@ -175,14 +223,14 @@ export default function SignUpPage() {
                       </div>
                     </div>
                     <div>
-                      <Label htmlFor="confirm-password">Confirm Password</Label>
+                      <Label htmlFor="confirmPassword">Confirm Password</Label>
                       <Input
-                        id="confirm-password"
-                        name="confirm-password"
+                        id="confirmPassword"
+                        name="confirmPassword"
                         type="password"
-                        autoComplete="new-password"
                         required
                         className="mt-1"
+                        onChange={handleInputChange}
                       />
                     </div>
                   </div>
@@ -206,15 +254,36 @@ export default function SignUpPage() {
                   <div className="space-y-4 rounded-md shadow-sm">
                     <div>
                       <Label htmlFor="address">Address</Label>
-                      <Input id="address" name="address" type="text" required className="mt-1" />
+                      <Input
+                        id="address"
+                        name="address"
+                        type="text"
+                        required
+                        className="mt-1"
+                        onChange={handleInputChange}
+                      />
                     </div>
                     <div>
-                      <Label htmlFor="postal-code">Postal Code</Label>
-                      <Input id="postal-code" name="postal-code" type="text" required className="mt-1" />
+                      <Label htmlFor="postalCode">Postal Code</Label>
+                      <Input
+                        id="postalCode"
+                        name="postalCode"
+                        type="text"
+                        required
+                        className="mt-1"
+                        onChange={handleInputChange}
+                      />
                     </div>
                     <div>
-                      <Label htmlFor="phone-number">Phone Number</Label>
-                      <Input id="phone-number" name="phone-number" type="tel" required className="mt-1" />
+                      <Label htmlFor="phoneNumber">Phone Number</Label>
+                      <Input
+                        id="phoneNumber"
+                        name="phoneNumber"
+                        type="tel"
+                        required
+                        className="mt-1"
+                        onChange={handleInputChange}
+                      />
                     </div>
                   </div>
                   <div>
@@ -239,47 +308,28 @@ export default function SignUpPage() {
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.2, duration: 0.5 }}
                 >
-                  <h3 className="text-2xl font-bold text-primary mb-4">Account Under Review</h3>
+                  <h3 className="text-2xl font-bold text-primary mb-4">
+                    {successMessage || "Account Under Review"}
+                  </h3>
                   <p className="text-gray-600">
-                    Your account creation is being reviewed by our team. Once approved, you will gain access to your
-                    account and receive your Account and Credit Card details.
-                  </p>
-                </motion.div>
-                <motion.div
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.4, duration: 0.5 }}
-                >
-                  <div className="w-24 h-24 mx-auto mb-4">
-                    <svg className="animate-spin" viewBox="0 0 24 24">
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                        fill="none"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      />
-                    </svg>
-                  </div>
-                  <p className="text-sm text-gray-500">
-                    This process may take up to 24 hours. We appreciate your patience.
+                    {successMessage
+                      ? "Thank you for registering! You will receive an email with further details."
+                      : "Your account creation is being reviewed by our team. Once approved, you will gain access to your account and receive your Account and Credit Card details."}
                   </p>
                 </motion.div>
               </motion.div>
             )}
           </AnimatePresence>
-          {progress > 0 && progress < 100 && <Progress value={progress} className="w-full" />}
+          {progress > 0 && progress < 100 && (
+            <Progress value={progress} className="w-full" />
+          )}
           <div className="text-center">
             <p className="mt-2 text-sm text-gray-600">
               Already have an account?{" "}
-              <Link href="/sign-in" className="font-medium text-primary hover:text-primary/80">
+              <Link
+                href="/sign-in"
+                className="font-medium text-primary hover:text-primary/80"
+              >
                 Sign in
               </Link>
             </p>
@@ -287,5 +337,5 @@ export default function SignUpPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
