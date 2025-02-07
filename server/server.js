@@ -3,9 +3,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const db = require('./models');
 
-
-const authenticateToken = require('./middleware/auth'); // Import the authentication middleware
-
+const authenticateToken = require('./middleware/auth'); // Import authentication middleware
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -18,37 +16,25 @@ app.use(cors({
   credentials: true, 
 }));
 
-// Routers
+// Import Routers
 const userRouter = require('./routes/userRoutes');
 const transactionRouter = require('./routes/transactionsRoutes');
+const depositsRouter = require('./routes/depositsRoutes');  // ✅ Added Deposits
+const transfersRouter = require('./routes/transfersRoutes'); // ✅ Added Transfers
 
 // Apply authentication middleware globally (except for public routes)
-
-// app.use((req, res, next) => {
-//   // Skip authentication for public routes like login and register
-//   if (['/user/login', '/user/register'].includes(req.path)) {
-//     return next();
-//   }
-//   authenticateToken(req, res, next);
-// });
 app.use((req, res, next) => {
-  return next(); // Skip authentication for all routes
-});
-
-
-
-app.use((req, res, next) => {
-  // Skip authentication for public routes like login and register
   if (['/user/login', '/user/register'].includes(req.path)) {
-    return next();
+    return next(); // Skip authentication for login and register
   }
   authenticateToken(req, res, next);
 });
 
-
-// Route definitions
+// Register Routes
 app.use('/user', userRouter);
 app.use('/transactions', transactionRouter);
+app.use('/deposits', depositsRouter);    // ✅ Register Deposits Route
+app.use('/transfers', transfersRouter);  // ✅ Register Transfers Route
 
 // Global Error Handler
 app.use((err, req, res, next) => {
@@ -56,6 +42,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
+// Sync Database and Start Server
 db.sequelize.sync().then(() => {
   app.listen(PORT, () => {
     console.log(`> Listening on port ${PORT}`);
