@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const { User, CreditCard, Transaction } = require('../models');
-const authenticateToken = require('../middleware/auth');
+// const authenticateToken = require('../middleware/auth');
 
-// Apply middleware to all routes in this file
-router.use(authenticateToken);
+// // Apply middleware to all routes in this file
+// router.use(authenticateToken);
 
 // Get all transactions (for the authenticated user)
 router.get('/', async (req, res) => {
@@ -32,6 +32,7 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   const { senderCardId, receiverCardId, amount } = req.body;
 
+  console.log(">Transaction route has been called");
   try {
     if (senderCardId === receiverCardId) {
       return res.status(400).json({ error: 'Sender and receiver cannot be the same' });

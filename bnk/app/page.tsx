@@ -11,6 +11,9 @@ export default function HomePage() {
           <h1 className="text-3xl font-bold text-white">MyBank</h1>
           {/* Navigation Links */}
           <div className="hidden md:flex space-x-8">
+             <Link href="/admin" className="text-white hover:underline">
+             Admin
+            </Link>
             <Link href="/" className="text-white hover:underline">
               Online banking
             </Link>

@@ -3,10 +3,9 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const { User, CreditCard } = require('../models');
 const jwt = require('jsonwebtoken');
-const authenticateToken = require('../middleware/auth');
 
 // Get all users (for testing only, remove in production)
-router.get('/', authenticateToken, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const listAllUsers = await User.findAll();
     res.json(listAllUsers);

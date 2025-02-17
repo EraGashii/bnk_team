@@ -3,10 +3,9 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const db = require('./models');
 
-const authenticateToken = require('./middleware/auth'); // Import authentication middleware
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 4000;
 
 // Middleware
 app.use(express.json()); // Parse JSON bodies
@@ -27,7 +26,6 @@ app.use((req, res, next) => {
   if (['/user/login', '/user/register'].includes(req.path)) {
     return next(); // Skip authentication for login and register
   }
-  authenticateToken(req, res, next);
 });
 
 // Register Routes
