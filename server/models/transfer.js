@@ -1,27 +1,30 @@
 module.exports = (sequelize, DataTypes) => {
-    const Transfer = sequelize.define("Transfer", {
+  const Transfer = sequelize.define(
+    "Transfer",
+    {
       date: {
         type: DataTypes.DATE,
-        allowNull: false
+        allowNull: false,
       },
       amount: {
         type: DataTypes.FLOAT,
-        allowNull: false
+        allowNull: false,
       },
       fromAccount: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
       },
       toAccount: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
       },
       status: {
         type: DataTypes.STRING,
-        allowNull: false
-      }
-    });
-  
-    return Transfer;
-  };
-  
+        allowNull: false,
+      },
+    },
+    { timestamps: true } // ✅ Ensure Sequelize includes createdAt & updatedAt
+  );
+
+  return Transfer;
+};

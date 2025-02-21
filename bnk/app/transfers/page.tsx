@@ -14,12 +14,16 @@ export default function Transfers() {
   const [transfers, setTransfers] = useState<Transfer[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/transfers") // Call API
+    fetch("http://localhost:4000/transfers")
       .then((res) => res.json())
-      .then((data) => setTransfers(data))
+      .then((data) => {
+        console.log("Fetched Transfers:", data); // ✅ Debugging
+        setTransfers(data);
+      })
       .catch((err) => console.error("Error fetching transfers:", err));
   }, []);
-
+  
+  
   return (
     <div className="min-h-screen bg-white text-gray-900">
       <div className="bg-red-600 py-4 text-white text-center">
@@ -42,6 +46,7 @@ export default function Transfers() {
               </tr>
             </thead>
             <tbody className="bg-white">
+    
               {transfers.map((transfer) => (
                 <tr key={transfer.id} className="border-b border-gray-300">
                   <td className="p-3">{transfer.date}</td>
