@@ -24,11 +24,14 @@ app.use(
 const userRouter = require("./routes/userRoutes");
 const transactionRouter = require("./routes/transactionsRoutes");
 const depositsRouter = require("./routes/depositsRoutes");
+const authRoutes = require('./routes/auth')
+
 
 // Register Routes
 app.use("/user", userRouter);
 app.use("/transactions", transactionRouter);
 app.use("/deposits", depositsRouter);
+app.use('/auth', authRoutes);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {

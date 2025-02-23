@@ -16,7 +16,6 @@ router.get('/', async (req, res) => {
 });
 
 // === 1) Register User & Generate Credit Card ===
-// === 1) Register User & Generate Credit Card ===
 router.post('/register', async (req, res) => {
   const { name, surname, email, password, address, postalCode, phoneNumber } = req.body;
 

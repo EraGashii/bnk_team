@@ -1,21 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const { User, CreditCard, Transaction } = require('../models');
+const { Op } = require("sequelize");
 // const authenticateToken = require('../middleware/auth');
 
 // // Apply middleware to all routes in this file
 // router.use(authenticateToken);
 
-// Get all transactions (for the authenticated user)
 router.get('/', async (req, res) => {
   try {
     const transactions = await Transaction.findAll({
-      where: {
-        [Op.or]: [
-          { '$SenderCard.userId$': req.user.id },
-          { '$ReceiverCard.userId$': req.user.id }
-        ]
-      },
       include: [
         { model: CreditCard, as: 'SenderCard', include: [{ model: User, as: 'User' }] },
         { model: CreditCard, as: 'ReceiverCard', include: [{ model: User, as: 'User' }] }
