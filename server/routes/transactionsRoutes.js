@@ -68,4 +68,38 @@ router.post('/', async (req, res) => {
   }
 });
 
+
+// Deposit route, uses Credit Card IDS, if you need to test, just create a user so it generates a new credit card and then use this api to deposit funds to the card.
+router.post('/deposit', async (req, res) => {
+  const {cardId, amount} = req.body;
+
+  try {
+
+    const creditCard = await CreditCard.findByPk(cardId);
+    if (!creditCard) {
+      return res.status(404).json({error: 'Credit card not found'});
+    }
+
+    if (amount <= 0) {
+      return res.status(400).json({error: 'Deposit amount must be higher than 0'});
+    }
+
+    await creditCard.update({balance: creditCard.balance + amount});
+    
+    res.status(200).json({
+      message: 'Deposit successful',
+      card: {
+        id: creditCard.id,
+        balance: creditCard.balance,
+      }
+
+    });
+   } catch(error) {
+
+      console.error('Error depositing funds:', error);
+      res.status(500).json({error: 'Internal Server Error'});
+  }
+
+})
+
 module.exports = router;

@@ -16,34 +16,23 @@ router.get('/', async (req, res) => {
 });
 
 // === 1) Register User & Generate Credit Card ===
+// === 1) Register User & Generate Credit Card ===
 router.post('/register', async (req, res) => {
-  // Destructure ALL the fields from the body
-  const {
-    name,
-    surname,
-    email,
-    password,
-    address,
-    postalCode,
-    phoneNumber
-  } = req.body;
+  const { name, surname, email, password, address, postalCode, phoneNumber } = req.body;
 
-  // Basic validation
   if (!name || !surname || !email || !password || !address || !postalCode || !phoneNumber) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
   try {
-    // Check if user already exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return res.status(400).json({ error: 'Email is already registered' });
     }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create the user record
+    // Create the user with default status 'Pending'
     const newUser = await User.create({
       name,
       surname,
@@ -51,22 +40,22 @@ router.post('/register', async (req, res) => {
       password: hashedPassword,
       address,
       postalCode,
-      phoneNumber
+      phoneNumber,
+      status: "Pending", // Set user as pending
     });
 
-    // === 2) Generate Credit Card for the New User ===
+    // Generate credit card for user
     const generatedCard = await createCreditCardForUser(newUser.id);
 
-    // Return user + card data if you want the frontend to know
-    // Or just return a success message
-    // ONLY FOR TESTING PURPOSES RIGHT NOW, WILL REMOVE LATER
     res.status(201).json({
+      message: "Registration successful. Your account is under review.",
       user: {
         id: newUser.id,
         name: newUser.name,
-        email: newUser.email
+        email: newUser.email,
+        status: newUser.status, // Return status
       },
-      card: generatedCard
+      card: generatedCard,
     });
   } catch (error) {
     console.error('Error occurred during registration:', error);
@@ -88,6 +77,14 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
+    // Check if user is still pending or declined
+    if (user.status === 'Pending') {
+      return res.status(403).json({ error: 'Account is pending approval' });
+    }
+    if (user.status === 'Declined') {
+      return res.status(403).json({ error: 'Account has been declined' });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ error: 'Invalid email or password' });
@@ -99,7 +96,13 @@ router.post('/login', async (req, res) => {
       { expiresIn: '1h' }
     );
 
-    res.status(200).json({ token });
+    res.cookie('token', token, {
+      httpOnly: true,
+      sameSite: 'Strict',
+      maxAge: 3600000,
+    });
+
+    res.json({ success: true });
   } catch (error) {
     console.error('Error occurred during login:', error);
     res.status(500).json({ error: 'Internal Server Error' });

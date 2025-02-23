@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require('express');
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const db = require("./models");
@@ -6,6 +6,9 @@ const db = require("./models");
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+
+app.use(express.json()); // ✅ Middleware to parse JSON body
+app.use(express.urlencoded({ extended: true })); // Optional: Support URL-encoded bodies
 // Middleware
 app.use(
   cors({
@@ -21,13 +24,11 @@ app.use(
 const userRouter = require("./routes/userRoutes");
 const transactionRouter = require("./routes/transactionsRoutes");
 const depositsRouter = require("./routes/depositsRoutes");
-const transfersRouter = require("./routes/transfersRoutes");
 
 // Register Routes
 app.use("/user", userRouter);
 app.use("/transactions", transactionRouter);
 app.use("/deposits", depositsRouter);
-app.use("/transfers", transfersRouter);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
@@ -41,7 +42,7 @@ app.use((err, req, res, next) => {
 });
 
 // Sync Database and Start Server
-db.sequelize.sync({ alter: true }) // ✅ Ensures database updates
+db.sequelize.sync({ alter: true }) 
 .then(() => {
   app.listen(PORT, () => {
     console.log(`✅ Server is running on http://localhost:${PORT}`);

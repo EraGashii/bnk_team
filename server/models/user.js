@@ -28,6 +28,11 @@ module.exports = (sequelize, DataTypes) => {
     phoneNumber: {
       type: DataTypes.INTEGER,
       allowNull: false
+    },
+    status: {
+      type: DataTypes.ENUM("Pending", "Active", "Declined"),
+      allowNull: false,
+      defaultValue: "Pending",
     }
   });
 
