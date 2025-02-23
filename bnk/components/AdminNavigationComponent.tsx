@@ -56,6 +56,14 @@ export default function AdminNavigationComponent({ children }: { children: React
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/admin/taxpayments">
+                    <CreditCard size={20} />
+                    <span>Tax Payments</span>
+                  </Link>
+              </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>
           <SidebarFooter>
