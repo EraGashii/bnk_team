@@ -93,3 +93,19 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Ngjyra e sfondit bazuar në temën */
+body.dark {
+  background-color: #000;
+  color: white;
+}
+
+body.light {
+  background-color: #f3f4f6;
+  color: black;
+}
+
+/* Stili për butonin e temës */
+button {
+  transition: all 0.3s ease;
+}

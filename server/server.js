@@ -26,16 +26,15 @@ const transactionRouter = require("./routes/transactionsRoutes");
 const depositsRouter = require("./routes/depositsRoutes");
 const authRoutes = require('./routes/auth')
 const taxPaymentsRoutes = require('./routes/taxPaymentsRoutes');
+const settingsRoutes = require("./routes/settings"); // ✅ Importo ruterin e settings
 
 // Register Routes
 app.use("/user", userRouter);
 app.use("/transactions", transactionRouter);
 app.use("/deposits", depositsRouter);
 app.use('/auth', authRoutes);
-
-// Regjistro Route të ri për TaxPayments ✅
 app.use('/taxpayments', taxPaymentsRoutes);
-
+app.use("/api/settings", settingsRoutes);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
