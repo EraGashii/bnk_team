@@ -31,7 +31,7 @@ const settingsRoutes = require("./routes/settings"); // ✅ Importo ruterin e se
 // Register Routes
 app.use("/user", userRouter);
 app.use("/transactions", transactionRouter);
-app.use("/deposits", depositsRouter);
+app.use("/api/deposits", depositsRouter);
 app.use('/auth', authRoutes);
 app.use('/taxpayments', taxPaymentsRoutes);
 app.use("/api/settings", settingsRoutes);

@@ -42,6 +42,15 @@ export default function UserDashboardComponent({ children }: { children: React.R
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/user/deposit">
+                    <CreditCard size={20} />
+                    <span>Deposit</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              
             </SidebarMenu>
           </SidebarContent>
           <SidebarFooter>
