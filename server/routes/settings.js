@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const db = require("../config/database"); // Import database connection
 
+
 // 📌 Merr të dhënat e përdoruesit nga MySQL
 router.get("/", (req, res) => {
     const userId = req.user?.id || 1; // Siguro që ka një userId të vlefshëm

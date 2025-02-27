@@ -31,7 +31,7 @@ export default function Transfers() {
         <p className="text-lg">Manage your money transfers here.</p>
       </div>
 
-      <div className="max-w-6xl mx-auto mt-8 p-6 bg-gray-100 shadow-lg rounded-lg">
+      <div className="max-w-full mx-auto mt-8 p-6 bg-gray-100 shadow-lg rounded-lg">
         <h2 className="text-2xl font-semibold text-red-600 mb-4">Transfer History</h2>
 
         <div className="overflow-x-auto">

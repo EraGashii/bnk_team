@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Sidebar,
   SidebarContent,
@@ -7,26 +9,26 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarProvider,
-} from "@/components/ui/sidebar"
-import Link from "next/link"
-import { Home, Users, CreditCard, PiggyBank, Settings, LogOut } from "lucide-react"
+} from "@/components/ui/sidebar";
+import Link from "next/link";
+import { Home, CreditCard, Settings, LogOut } from "lucide-react";
 
-export default function AdminNavigationComponent({ children }: { children: React.ReactNode }) {
+export default function UserDashboardComponent({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
       <div className="flex h-screen w-full bg-background">
         {/* Sidebar */}
-        <Sidebar>
+        <Sidebar className="h-full w-64">
           <SidebarHeader>
-            <Link href="/admin" className="text-2xl font-bold text-primary px-4 py-2 block">
-              BankkApp Admin
+            <Link href="/user" className="text-2xl font-bold text-primary px-4 py-2 block">
+              BankApp User
             </Link>
           </SidebarHeader>
           <SidebarContent>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/admin">
+                  <Link href="/user">
                     <Home size={20} />
                     <span>Dashboard</span>
                   </Link>
@@ -34,35 +36,11 @@ export default function AdminNavigationComponent({ children }: { children: React
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/admin/users">
-                    <Users size={20} />
-                    <span>Users</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/transactions">
+                  <Link href="/user/transactions">
                     <CreditCard size={20} />
                     <span>Transactions</span>
                   </Link>
                 </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/deposits">
-                    <PiggyBank size={20} />
-                    <span>Deposits</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/taxpayments">
-                    <CreditCard size={20} />
-                    <span>Tax Payments</span>
-                  </Link>
-              </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>
@@ -70,7 +48,7 @@ export default function AdminNavigationComponent({ children }: { children: React
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/admin/settings">
+                  <Link href="/user/settings">
                     <Settings size={20} />
                     <span>Settings</span>
                   </Link>
@@ -89,8 +67,8 @@ export default function AdminNavigationComponent({ children }: { children: React
         </Sidebar>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-y-auto p-8">{children}</main>
+        <main className="flex-1 overflow-y-auto p-8 bg-gray-100">{children}</main>
       </div>
     </SidebarProvider>
-  )
+  );
 }
