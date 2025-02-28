@@ -37,6 +37,9 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'userId',
       onDelete: 'CASCADE'
     });
+    CreditCard.hasMany(models.Deposit, {
+      foreignKey: 'creditCardId'
+    });
   };
 
   return CreditCard;

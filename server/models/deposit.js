@@ -1,32 +1,36 @@
-// models/deposit.js
 module.exports = (sequelize, DataTypes) => {
     const Deposit = sequelize.define('Deposit', {
-      userId: {
+      creditCardId: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+          model: 'CreditCards',
+          key: 'id',
+        },
+        onDelete: 'CASCADE', // Ensures when the card is deleted, deposits will be removed as well
+        onUpdate: 'CASCADE',
       },
       amount: {
         type: DataTypes.FLOAT,
-        allowNull: false
+        allowNull: false,
       },
       method: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
       },
       date: {
         type: DataTypes.DATE,
-        allowNull: false
+        allowNull: false,
       },
       status: {
         type: DataTypes.STRING,
         defaultValue: 'Pending',
-        allowNull: false
-      }
+        allowNull: false,
+      },
     });
   
-    // Add associations if needed
     Deposit.associate = function(models) {
-      Deposit.belongsTo(models.User, { foreignKey: 'userId' });
+      Deposit.belongsTo(models.CreditCard, { foreignKey: 'creditCardId' });
     };
   
     return Deposit;

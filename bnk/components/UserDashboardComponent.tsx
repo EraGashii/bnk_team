@@ -81,3 +81,4 @@ export default function UserDashboardComponent({ children }: { children: React.R
     </SidebarProvider>
   );
 }
+
