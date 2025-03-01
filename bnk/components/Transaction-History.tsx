@@ -2,17 +2,45 @@
 
 import { DashboardCard } from "./ui/dashboard-card"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
+import { useEffect, useState } from "react"
 
-const data = [
-  { name: "Jan", amount: 400 },
-  { name: "Feb", amount: 300 },
-  { name: "Mar", amount: 600 },
-  { name: "Apr", amount: 800 },
-  { name: "May", amount: 700 },
-  { name: "Jun", amount: 900 },
-]
+interface TransactionData {
+  name: string
+  amount: number
+}
 
 export function TransactionHistory() {
+  const [data, setData] = useState<TransactionData[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:3001/transactions/history")
+        if (!response.ok) {
+          throw new Error("Failed to fetch transaction history")
+        }
+        const result = await response.json()
+        setData(result)
+      } catch (err) {
+        setError("Error fetching transaction history. Please try again later.")
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
+  if (isLoading) {
+    return <div>Loading transaction history...</div>
+  }
+
+  if (error) {
+    return <div className="text-red-500">{error}</div>
+  }
+
   return (
     <DashboardCard title="Transaction History">
       <div className="h-[300px]">
@@ -29,4 +57,3 @@ export function TransactionHistory() {
     </DashboardCard>
   )
 }
-

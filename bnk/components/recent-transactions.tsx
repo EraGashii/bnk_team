@@ -1,56 +1,56 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useEffect, useState } from "react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface Transaction {
-  id: string
-  amount: number
-  status: string
+  id: string;
+  amount: number;
+  status: string;
   SenderCard: {
     User: {
-      email: string
-    }
-  }
+      email: string;
+    };
+  };
   ReceiverCard: {
     User: {
-      email: string
-    }
-  }
-  createdAt: string
+      email: string;
+    };
+  };
+  createdAt: string;
 }
 
 export function RecentTransactions() {
-  const [transactions, setTransactions] = useState<Transaction[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await fetch("http://localhost:3001/transactions")
+        const response = await fetch("http://localhost:3001/transactions");
         if (!response.ok) {
-          throw new Error("Failed to fetch transactions")
+          throw new Error("Failed to fetch transactions");
         }
-        const data = await response.json()
-        setTransactions(data)
+        const data = await response.json();
+        setTransactions(data);
       } catch (err) {
-        setError("Error fetching transactions. Please try again later.")
+        setError("Error fetching transactions. Please try again later.");
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchTransactions()
-  }, [])
+    fetchTransactions();
+  }, []);
 
   if (isLoading) {
-    return <div>Loading transactions...</div>
+    return <div>Loading transactions...</div>;
   }
 
   if (error) {
-    return <div className="text-red-500">{error}</div>
+    return <div className="text-red-500">{error}</div>;
   }
 
   return (
@@ -85,6 +85,5 @@ export function RecentTransactions() {
         </Table>
       </CardContent>
     </Card>
-  )
+  );
 }
-
