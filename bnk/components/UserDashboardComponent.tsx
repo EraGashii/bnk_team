@@ -11,7 +11,7 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { Home, CreditCard, Settings, LogOut } from "lucide-react";
+import { Home, CreditCard, Settings, Wallet, Banknote, LogOut } from "lucide-react";
 
 export default function UserDashboardComponent({ children }: { children: React.ReactNode }) {
   return (
@@ -45,12 +45,20 @@ export default function UserDashboardComponent({ children }: { children: React.R
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <Link href="/user/deposit">
-                    <CreditCard size={20} />
+                    <Banknote size={20} />
                     <span>Deposit</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-              
+              <SidebarMenuItem>
+        <SidebarMenuButton asChild>
+          <Link href="/user/savings">
+            <Wallet className="w-4 h-4 mr-2" />
+            <span>Savings</span>
+          </Link>
+        </SidebarMenuButton>
+      </SidebarMenuItem>
+      
             </SidebarMenu>
           </SidebarContent>
           <SidebarFooter>

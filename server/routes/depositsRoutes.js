@@ -18,6 +18,19 @@ router.get('/creditCard/:creditCardId', authenticateToken, async (req, res) => {
   }
 });
 
+// GET all deposits (for Admin)
+router.get('/admin/all', authenticateToken, async (req, res) => {
+  try {
+    const deposits = await Deposit.findAll({
+      include: [{ model: CreditCard, attributes: ['id', 'cardNumber', 'balance'] }] // Include credit card details
+    });
+
+    res.json(deposits);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // POST a new deposit
 router.post("/", authenticateToken, async (req, res) => {
   const { creditCardId, amount, method, date } = req.body;
