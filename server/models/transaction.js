@@ -22,13 +22,10 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: 'pending',
       },
     },
-    {}
+    {
+      timestamps: true, // ✅ This ensures createdAt and updatedAt are added automatically
+    }
   );
-
-  Transaction.associate = function (models) {
-    Transaction.belongsTo(models.CreditCard, { as: 'SenderCard', foreignKey: 'senderCardId' });
-    Transaction.belongsTo(models.CreditCard, { as: 'ReceiverCard', foreignKey: 'receiverCardId' });
-  };
 
   return Transaction;
 };

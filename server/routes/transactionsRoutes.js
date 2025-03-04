@@ -11,7 +11,7 @@ router.post('/', async (req, res) => {
       senderCardId,
       receiverCardId,
       amount,
-      status: 'pending', // Default status
+      status: 'pending',
     });
     res.status(201).json(transaction);
   } catch (error) {
@@ -29,9 +29,31 @@ router.get('/', async (req, res) => {
         { model: CreditCard, as: 'ReceiverCard', include: [{ model: User, as: 'User' }] },
       ],
     });
+
+    if (!transactions.length) {
+      return res.status(404).json({ message: 'No transactions found' });
+    }
+
     res.json(transactions);
   } catch (error) {
     console.error('Error fetching transactions:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// New Route: Get Transaction History with Custom Formatting
+router.get('/history', async (req, res) => {
+  try {
+    const transactions = await Transaction.findAll();
+
+    const formattedData = transactions.map(transaction => ({
+      name: `Transaction #${transaction.id}`,
+      amount: transaction.amount
+    }));
+
+    res.json(formattedData);
+  } catch (error) {
+    console.error('Error fetching transaction history:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -91,7 +113,7 @@ router.delete('/:id', async (req, res) => {
     }
 
     await transaction.destroy();
-    res.status(204).send(); // No content
+    res.status(204).send();
   } catch (error) {
     console.error('Error deleting transaction:', error);
     res.status(500).json({ error: 'Internal Server Error' });
