@@ -7,6 +7,8 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 
+
+
 app.use(express.json()); // ✅ Middleware to parse JSON body
 app.use(express.urlencoded({ extended: true })); // Optional: Support URL-encoded bodies
 // Middleware
@@ -18,6 +20,7 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+app.use(cookieParser());
 
 
 // Import Routers

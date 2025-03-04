@@ -15,6 +15,165 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Verify JWT token and authenticate user
+router.get('/verify', async (req, res) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+
+  try {
+    // Verify the token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'default_secret');
+
+    // Fetch the user from the database
+    const user = await User.findByPk(decoded.id, {
+      attributes: { exclude: ['password'] }, // Exclude sensitive data
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Return the user data
+    res.json({ user });
+  } catch (error) {
+    console.error('Error verifying token:', error);
+    res.status(401).json({ error: 'Invalid or expired token' });
+  }
+});
+
+// === Edit User 
+router.put('/:id', async (req, res) => {
+  const { id } = req.params;
+  const { name, surname, email, address, postalCode, phoneNumber, status } = req.body;
+
+  try {
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Update user details
+    user.name = name || user.name;
+    user.surname = surname || user.surname;
+    user.email = email || user.email;
+    user.address = address || user.address;
+    user.postalCode = postalCode || user.postalCode;
+    user.phoneNumber = phoneNumber || user.phoneNumber;
+    user.status = status || user.status;
+
+    await user.save();
+
+    res.json({ message: 'User updated successfully', user });
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+// == Delete User 
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    await user.destroy();
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+// Approve User
+router.put('/:id/approve', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (user.status !== 'Pending') {
+      return res.status(400).json({ error: 'User is not pending approval' });
+    }
+
+    user.status = 'Active';
+    await user.save();
+
+    res.json({ message: 'User approved successfully', user });
+  } catch (error) {
+    console.error('Error approving user:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Deny User
+router.put('/:id/deny', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (user.status !== 'Pending') {
+      return res.status(400).json({ error: 'User is not pending approval' });
+    }
+
+    user.status = 'Declined';
+    await user.save();
+
+    res.json({ message: 'User denied successfully', user });
+  } catch (error) {
+    console.error('Error denying user:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Get Pending Users
+router.get('/pending', async (req, res) => {
+  try {
+    const pendingUsers = await User.findAll({ where: { status: 'Pending' } });
+    res.json(pendingUsers);
+  } catch (error) {
+    console.error('Error fetching pending users:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Get Active Users
+router.get('/active', async (req, res) => {
+  try {
+    const activeUsers = await User.findAll({ where: { status: 'Active' } });
+    res.json(activeUsers);
+  } catch (error) {
+    console.error('Error fetching active users:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Get Declined Users
+router.get('/declined', async (req, res) => {
+  try {
+    const declinedUsers = await User.findAll({ where: { status: 'Declined' } });
+    res.json(declinedUsers);
+  } catch (error) {
+    console.error('Error fetching declined users:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // === 1) Register User & Generate Credit Card ===
 router.post('/register', async (req, res) => {
   const { name, surname, email, password, address, postalCode, phoneNumber } = req.body;
@@ -90,7 +249,7 @@ router.post('/login', async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { id: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET || 'default_secret',
       { expiresIn: '1h' }
     );

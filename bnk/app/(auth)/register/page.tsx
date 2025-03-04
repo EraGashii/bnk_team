@@ -1,18 +1,19 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Eye, EyeOff } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import axios from "axios"
 import { Formik, Form, Field, ErrorMessage } from "formik"
-
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Progress } from "@/components/ui/progress"
 import { signUpSchema } from "./validation-schema"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/hooks/useAuth"
 
 export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -20,6 +21,14 @@ export default function SignUpPage() {
   const [progress, setProgress] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const router = useRouter()
+  const { isAuthenticated, loading } = useAuth()
+
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      router.push("/home")
+    }
+  }, [isAuthenticated, loading, router])
 
   const steps = [
     { title: "Create your account", step: 1 },
@@ -40,7 +49,7 @@ export default function SignUpPage() {
 
   const handleSubmit = async (
     values: typeof initialValues,
-    { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void },
+    { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
   ) => {
     setError(null)
     setSubmitting(true)
@@ -73,6 +82,10 @@ export default function SignUpPage() {
     }
 
     setSubmitting(false)
+  }
+
+  if (loading || isAuthenticated) {
+    return null
   }
 
   return (
@@ -320,4 +333,3 @@ export default function SignUpPage() {
     </div>
   )
 }
-
