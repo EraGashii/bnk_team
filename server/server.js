@@ -9,8 +9,8 @@ const PORT = process.env.PORT || 4000;
 
 
 
-app.use(express.json()); // ✅ Middleware to parse JSON body
-app.use(express.urlencoded({ extended: true })); // Optional: Support URL-encoded bodies
+app.use(express.json()); // Middleware to parse JSON body
+app.use(express.urlencoded({ extended: true })); // Support URL-encoded bodies
 // Middleware
 app.use(
   cors({
@@ -28,16 +28,12 @@ const userRouter = require("./routes/userRoutes");
 const transactionsRoutes = require('./routes/transactionsRoutes');
 const depositsRouter = require("./routes/depositsRoutes");
 const authRoutes = require('./routes/auth')
-const taxPaymentsRoutes = require('./routes/taxPaymentsRoutes');
-const settingsRoutes = require("./routes/settings"); // ✅ Importo ruterin e settings
 
 // Register Routes
 app.use("/user", userRouter);
 app.use('/transactions', transactionsRoutes);
 app.use("/api/deposits", depositsRouter);
 app.use('/auth', authRoutes);
-app.use('/taxpayments', taxPaymentsRoutes);
-app.use("/api/settings", settingsRoutes);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
