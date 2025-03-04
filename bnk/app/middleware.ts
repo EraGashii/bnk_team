@@ -16,5 +16,5 @@ export function middleware(req: NextRequest) {
 
 // Apply middleware to specific routes
 export const config = {
-  matcher: ['/home', '/dashboard'], // Adjust paths based on your Next.js structure
+  matcher: ['/home', '/admin/users'], // Adjust paths based on your Next.js structure
 }

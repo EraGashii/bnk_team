@@ -33,6 +33,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM("Pending", "Active", "Declined"),
       allowNull: false,
       defaultValue: "Pending",
+    },
+    role: {
+      type: DataTypes.ENUM("User", "Admin"),
+      allowNull: false,
+      defaultValue: "User",
     }
   });
 

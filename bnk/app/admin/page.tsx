@@ -1,9 +1,30 @@
+'use client'
+
 import AdminNavigationComponent from "@/components/AdminNavigationComponent"
 import { StatCard } from "@/components/StatCard"
 import { RecentTransactions } from "@/components/RecentTransactions"
 import { Users, DollarSign, ArrowUpRight, ArrowDownRight } from "lucide-react"
+import {useAuth} from "@/hooks/useAuth";
+import {useRouter} from "next/navigation"
+import {useEffect} from 'react';
 
 export default function AdminDashboard() {
+const { isAuthenticated, user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && user?.role !== 'Admin') {
+      // Redirects to the home page (if the user is logged in)
+      router.push('/home'); 
+    }
+    else if (!isAuthenticated) {
+      router.push('/login')
+    }
+  }, [isAuthenticated, user, loading, router]);
+
+  if (loading) return <p>Loading...</p>;
+  if (!isAuthenticated || user?.role !== 'Admin') return null;
+
   return (
     <AdminNavigationComponent>
       <div className="space-y-8">

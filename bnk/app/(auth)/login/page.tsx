@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/hooks/useAuth'
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -20,6 +21,13 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const router = useRouter()
+  const { isAuthenticated, loading } = useAuth()
+
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      router.push('/home')
+    }
+  }, [isAuthenticated, loading, router])
 
   const validateInputs = () => {
     if (!email.includes('@')) {
@@ -34,48 +42,56 @@ export default function LoginPage() {
     return true
   }
 
-const handleSignIn = async (e: React.FormEvent) => {
-  e.preventDefault();
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault()
 
-  if (!validateInputs()) return;
+    if (!validateInputs()) return
 
-  setIsLoading(true);
-  setProgress(0);
+    setIsLoading(true)
+    setProgress(0)
 
-  const timer = setInterval(() => {
-    setProgress((oldProgress) => {
-      if (oldProgress === 100) {
-        clearInterval(timer);
-        setIsLoading(false);
-        return 100;
-      }
-      return oldProgress + 10;
-    });
-  }, 200);
+    const timer = setInterval(() => {
+      setProgress((oldProgress) => {
+        if (oldProgress === 100) {
+          clearInterval(timer)
+          setIsLoading(false)
+          return 100
+        }
+        return oldProgress + 10
+      })
+    }, 200)
 
-  try {
-    const response = await axios.post('http://localhost:4000/user/login', {
-      email,
-      password,
-    }, { withCredentials: true });
+    try {
+      const response = await axios.post(
+        'http://localhost:4000/user/login',
+        {
+          email,
+          password,
+        },
+        { withCredentials: true }
+      )
 
-    router.push('/home'); // Redirect user to dashboard
-  } catch (err) {
-    if (err.response && err.response.data && err.response.data.error) {
-      if (err.response.data.error === 'Account is pending approval') {
-        setError('The account is currently in review by our team. You will be notified upon approval.');
-      } else if (err.response.data.error === 'Account has been declined') {
-        setError('Your account request has been declined. Please contact support.');
+      router.push('/home')
+    } catch (err) {
+      if (err.response && err.response.data && err.response.data.error) {
+        if (err.response.data.error === 'Account is pending approval') {
+          setError('The account is currently in review by our team. You will be notified upon approval.')
+        } else if (err.response.data.error === 'Account has been declined') {
+          setError('Your account request has been declined. Please contact support.')
+        } else {
+          setError(err.response.data.error)
+        }
       } else {
-        setError(err.response.data.error);
+        setError('Invalid email or password.')
       }
-    } else {
-      setError('Invalid email or password.');
+      setIsLoading(false)
+      setProgress(0)
     }
-    setIsLoading(false);
-    setProgress(0);
   }
-};
+
+  if (loading || isAuthenticated) {
+    return null
+  }
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
