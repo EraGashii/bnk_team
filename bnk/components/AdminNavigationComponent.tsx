@@ -9,7 +9,7 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
 import Link from "next/link"
-import { Home, Users, CreditCard, PiggyBank, Settings, LogOut } from "lucide-react"
+import { Home, Users, CreditCard, PiggyBank, Settings, PieChart, LogOut } from "lucide-react"
 
 export default function AdminNavigationComponent({ children }: { children: React.ReactNode }) {
   return (
@@ -61,6 +61,14 @@ export default function AdminNavigationComponent({ children }: { children: React
                   <Link href="/admin/taxpayments">
                     <CreditCard size={20} />
                     <span>Tax Payments</span>
+                  </Link>
+              </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/admin/reports">
+                    <PieChart size={20} />
+                    <span>Reports</span>
                   </Link>
               </SidebarMenuButton>
               </SidebarMenuItem>
