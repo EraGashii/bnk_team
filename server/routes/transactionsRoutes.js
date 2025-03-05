@@ -2,6 +2,53 @@ const express = require('express');
 const router = express.Router();
 const { Transaction, CreditCard, User } = require('../models');
 const jwt = require('jsonwebtoken');
+const { Op } = require("sequelize")
+
+
+// Middleware to authenticate user
+const authenticateUser = (req, res, next) => {
+  const token = req.cookies.token
+  if (!token) return res.status(401).json({ error: "Unauthorized - No token provided" })
+
+  try {
+    req.user = jwt.verify(token, process.env.JWT_SECRET || "default_secret")
+    next()
+  } catch (error) {
+    return res.status(401).json({ error: "Invalid or expired token" })
+  }
+}
+
+// Get transactions for logged-in user
+router.get("/user", authenticateUser, async (req, res) => {
+  try {
+    const userCreditCard = await CreditCard.findOne({ where: { userId: req.user.id } })
+    if (!userCreditCard) return res.status(404).json({ error: "No credit card found for this user" })
+
+    const transactions = await Transaction.findAll({
+      where: {
+        [Op.or]: [{ senderCardId: userCreditCard.id }, { receiverCardId: userCreditCard.id }]
+      },
+      include: [
+        { model: CreditCard, as: "SenderCard", attributes: ["cardNumber"] },
+        { model: CreditCard, as: "ReceiverCard", attributes: ["cardNumber"] }
+      ],
+      order: [["createdAt", "DESC"]]
+    })
+
+    const formattedTransactions = transactions.map((transaction) => ({
+      id: transaction.id,
+      receiverCardNumber: transaction.ReceiverCard?.cardNumber || "N/A",
+      amount: transaction.amount,
+      status: transaction.status,
+      createdAt: transaction.createdAt
+    }))
+
+    res.json(formattedTransactions)
+  } catch (error) {
+    console.error("Error fetching user transactions:", error)
+    res.status(500).json({ error: "Internal Server Error" })
+  }
+})
 
 // Create a new transaction using card numbers
 router.post("/", async (req, res) => {
@@ -60,23 +107,57 @@ router.post("/", async (req, res) => {
 
 
 // Read all transactions (GET)
-router.get('/', async (req, res) => {
-  try {
-    const transactions = await Transaction.findAll({
-      include: [
-        { model: CreditCard, as: 'SenderCard', include: [{ model: User, as: 'User' }] },
-        { model: CreditCard, as: 'ReceiverCard', include: [{ model: User, as: 'User' }] },
-      ],
-    });
+router.post("/", async (req, res) => {
+  console.log("Incoming Cookies:", req.cookies); // ✅ Debugging step
 
-    if (!transactions.length) {
-      return res.status(404).json({ message: 'No transactions found' });
+  const token = req.cookies.token; // ✅ Get token from cookies, not headers
+
+  if (!token) {
+    return res.status(401).json({ error: "Unauthorized - No token provided" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "default_secret");
+
+    // Get sender's credit card
+    const senderCard = await CreditCard.findOne({ where: { userId: decoded.id } });
+    if (!senderCard) {
+      return res.status(400).json({ error: "No credit card found for user" });
     }
 
-    res.json(transactions);
+    // Get receiver's credit card
+    const { receiverCardNumber, amount, reason } = req.body;
+    const receiverCard = await CreditCard.findOne({ where: { cardNumber: receiverCardNumber } });
+    if (!receiverCard) {
+      return res.status(400).json({ error: "Receiver card not found" });
+    }
+
+    // Check if sender has enough balance
+    if (senderCard.balance < amount) {
+      return res.status(400).json({ error: "Insufficient funds" });
+    }
+
+    // Deduct from sender, add to receiver
+    senderCard.balance -= amount;
+    receiverCard.balance += amount;
+
+    // Save updated balances
+    await senderCard.save();
+    await receiverCard.save();
+
+    // Create transaction
+    const transaction = await Transaction.create({
+      senderCardId: senderCard.id,
+      receiverCardId: receiverCard.id,
+      amount,
+      reason,
+      status: "completed", // Mark transaction as completed
+    });
+
+    res.status(201).json(transaction);
   } catch (error) {
-    console.error('Error fetching transactions:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error creating transaction:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
