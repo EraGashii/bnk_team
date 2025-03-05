@@ -1,167 +1,111 @@
 "use client"
-import React, { useEffect, useState } from 'react';
-import { ArrowDownRight, ArrowUpRight, Loader2 } from 'lucide-react';
 
-// Define the Transaction type based on your model
-interface Transaction {
-  id: number;
-  amount: number;
-  status: 'pending' | 'completed' | 'failed';
-  createdAt: string;
-  updatedAt: string;
-  senderCardId: number;
-  receiverCardId: number;
-}
+import { useState } from "react"
+import AdminNavigationComponent from "@/components/AdminNavigationComponent";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { TransactionsTable } from "./transactions-table"
+import { TransactionCharts } from "./transaction-charts"
+import { TransactionFilters } from "./transaction-filters"
+import { TransactionStats } from "./transaction-stats"
+import { Button } from "@/components/ui/button"
+import { Download, RefreshCw } from "lucide-react"
 
-function App() {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export default function TransactionsPage() {
+  const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    fetchTransactions();
-  }, []);
-
-  const fetchTransactions = async () => {
-    try {
-      setIsLoading(true);
-      // Replace with your actual API endpoint
-      const response = await fetch('/api/transactions');
-      if (!response.ok) {
-        throw new Error('Failed to fetch transactions');
-      }
-      const data = await response.json();
-      setTransactions(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString();
-  };
-
-  const formatAmount = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount);
-  };
-
-  const getStatusColor = (status: Transaction['status']) => {
-    switch (status) {
-      case 'completed':
-        return 'text-green-600 bg-green-100';
-      case 'pending':
-        return 'text-yellow-600 bg-yellow-100';
-      case 'failed':
-        return 'text-red-600 bg-red-100';
-      default:
-        return 'text-gray-600 bg-gray-100';
-    }
-  };
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="flex items-center space-x-2">
-          <Loader2 className="animate-spin" size={24} />
-          <span className="text-gray-700">Loading transactions...</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="bg-red-50 text-red-700 p-4 rounded-lg">
-          <p>Error: {error}</p>
-          <button 
-            onClick={fetchTransactions}
-            className="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
-          >
-            Retry
-          </button>
-        </div>
-      </div>
-    );
+  const refreshData = () => {
+    setIsLoading(true)
+    // In a real implementation, this would fetch data from your API
+    setTimeout(() => {
+      setIsLoading(false)
+    }, 1000)
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-lg shadow">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h1 className="text-2xl font-semibold text-gray-800">Transactions</h1>
-          </div>
-          
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">From Card</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">To Card</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created At</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Updated At</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {transactions.map((transaction) => (
-                  <tr key={transaction.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      #{transaction.id}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        {transaction.amount >= 0 ? (
-                          <ArrowDownRight className="text-green-500 mr-2" size={16} />
-                        ) : (
-                          <ArrowUpRight className="text-red-500 mr-2" size={16} />
-                        )}
-                        <span className={transaction.amount >= 0 ? 'text-green-600' : 'text-red-600'}>
-                          {formatAmount(Math.abs(transaction.amount))}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(transaction.status)}`}>
-                        {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      Card #{transaction.senderCardId}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      Card #{transaction.receiverCardId}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {formatDate(transaction.createdAt)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {formatDate(transaction.updatedAt)}
-                    </td>
-                  </tr>
-                ))}
-                {transactions.length === 0 && (
-                  <tr>
-                    <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
-                      No transactions found
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+    <AdminNavigationComponent>
+    <div className="container mx-auto py-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Transactions</h1>
+          <p className="text-muted-foreground">Manage and monitor all transactions in the system</p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={refreshData} disabled={isLoading}>
+            <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? "animate-spin" : ""}`} />
+            Refresh
+          </Button>
+          <Button variant="outline">
+            <Download className="h-4 w-4 mr-2" />
+            Export
+          </Button>
         </div>
       </div>
+
+      <TransactionStats />
+
+      <Tabs defaultValue="all" className="space-y-4">
+        <div className="flex justify-between items-center">
+          <TabsList>
+            <TabsTrigger value="all">All Transactions</TabsTrigger>
+            <TabsTrigger value="pending">Pending</TabsTrigger>
+            <TabsTrigger value="completed">Completed</TabsTrigger>
+            <TabsTrigger value="failed">Failed</TabsTrigger>
+          </TabsList>
+          <TransactionFilters />
+        </div>
+
+        <TabsContent value="all" className="space-y-6">
+          <TransactionCharts />
+          <Card>
+            <CardHeader>
+              <CardTitle>All Transactions</CardTitle>
+              <CardDescription>A complete list of all transactions in the system</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <TransactionsTable isLoading={isLoading} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="pending" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Pending Transactions</CardTitle>
+              <CardDescription>Transactions that are awaiting processing</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <TransactionsTable isLoading={isLoading} status="pending" />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="completed" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Completed Transactions</CardTitle>
+              <CardDescription>Successfully processed transactions</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <TransactionsTable isLoading={isLoading} status="completed" />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="failed" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Failed Transactions</CardTitle>
+              <CardDescription>Transactions that could not be processed</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <TransactionsTable isLoading={isLoading} status="failed" />
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
-  );
+  </AdminNavigationComponent >
+  )
 }
 
-export default App;
