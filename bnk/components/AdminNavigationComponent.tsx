@@ -49,12 +49,6 @@ export default function AdminNavigationComponent({ children }: { children: React
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/deposits">
-                    <PiggyBank size={20} />
-                    <span>Deposits</span>
-                  </Link>
-                </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
@@ -65,24 +59,12 @@ export default function AdminNavigationComponent({ children }: { children: React
               </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/reports">
-                    <PieChart size={20} />
-                    <span>Reports</span>
-                  </Link>
-              </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>
           <SidebarFooter>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin/settings">
-                    <Settings size={20} />
-                    <span>Settings</span>
-                  </Link>
-                </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>

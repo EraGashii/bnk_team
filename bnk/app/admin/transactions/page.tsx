@@ -1,30 +1,43 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import AdminNavigationComponent from "@/components/AdminNavigationComponent"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { TransactionsTable } from "./transactions-table"
-import { TransactionFilters } from "./transaction-filters"
-import { TransactionStats } from "./transaction-stats"
-import { Button } from "@/components/ui/button"
-import { Download, RefreshCw } from "lucide-react"
+import { useState, useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
+import AdminNavigationComponent from "@/components/AdminNavigationComponent";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TransactionsTable } from "./transactions-table";
+import { TransactionFilters } from "./transaction-filters";
+import { TransactionStats } from "./transaction-stats";
+import { Button } from "@/components/ui/button";
+import { Download, RefreshCw } from "lucide-react";
 
 export default function TransactionsPage() {
-  const [isLoading, setIsLoading] = useState(false)
-  const [filters, setFilters] = useState({})
-  const [activeTab, setActiveTab] = useState("all")
+  const { isAuthenticated, user, loading } = useAuth();
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [filters, setFilters] = useState({});
+  const [activeTab, setActiveTab] = useState("all");
+
+  useEffect(() => {
+    if (!loading && (!isAuthenticated || user?.role !== "Admin")) {
+      router.push("/login"); // Redirect non-admins
+    }
+  }, [isAuthenticated, user, loading, router]);
+
+  if (loading) return <p>Loading...</p>;
+  if (!isAuthenticated || user?.role !== "Admin") return null; // Prevents flicker
 
   const refreshData = () => {
-    setIsLoading(true)
+    setIsLoading(true);
     setTimeout(() => {
-      setIsLoading(false)
-    }, 1000)
-  }
+      setIsLoading(false);
+    }, 1000);
+  };
 
   const handleTabChange = (value: string) => {
-    setActiveTab(value)
-  }
+    setActiveTab(value);
+  };
 
   return (
     <AdminNavigationComponent>
@@ -109,6 +122,5 @@ export default function TransactionsPage() {
         </Tabs>
       </div>
     </AdminNavigationComponent>
-  )
+  );
 }
-
