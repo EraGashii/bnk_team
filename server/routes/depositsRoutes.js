@@ -1,79 +1,163 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { Deposit, CreditCard } = require('../models');
-const authenticateToken = require('../middleware/auth'); // Import your middleware
+const { User, CreditCard, Savings } = require("../models");
+const jwt = require('jsonwebtoken')
 
-// GET all deposits for a specific credit card
-router.get('/creditCard/:creditCardId', authenticateToken, async (req, res) => {
-  const creditCardId = req.params.creditCardId;
-  try {
-    const deposits = await Deposit.findAll({
-      where: {
-        creditCardId: creditCardId // Fetch by creditCardId
-      }
-    });
-    res.json(deposits);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+// Deposit money into savings from a credit card
+router.post("/savings", async (req, res) => {
+  const token = req.cookies.token; // Get JWT token from cookies
+
+  if (!token) {
+    return res.status(401).json({ error: "Unauthorized - No token provided" });
   }
-});
-
-// GET all deposits (for Admin)
-router.get('/admin/all', authenticateToken, async (req, res) => {
-  try {
-    const deposits = await Deposit.findAll({
-      include: [{ model: CreditCard, attributes: ['id', 'cardNumber', 'balance'] }] // Include credit card details
-    });
-
-    res.json(deposits);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// POST a new deposit
-router.post("/", authenticateToken, async (req, res) => {
-  const { creditCardId, amount, method, date } = req.body;
 
   try {
-    // Create a new deposit
-    const newDeposit = await Deposit.create({
-      creditCardId,  // Link to the Credit Card
-      amount,
-      method,
-      date,
-      status: 'Pending'
-    });
+    // Decode the token to get the user ID
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "default_secret");
+    const userId = decoded.id; // Extract user ID from the decoded token
 
-    // Get the related credit card
-    const creditCard = await CreditCard.findByPk(creditCardId);
+    const { creditCardId, amount } = req.body;
+
+    if (!creditCardId || !amount || amount <= 0) {
+      return res.status(400).json({ error: "Invalid input data" });
+    }
+
+    // Find the credit card belonging to this user
+    const creditCard = await CreditCard.findOne({ where: { id: creditCardId, userId } });
 
     if (!creditCard) {
-      return res.status(404).json({ message: 'Credit card not found' });
+      return res.status(404).json({ error: "Credit card not found" });
     }
 
-    // Update the credit card's balance
-    creditCard.balance += amount;  // Add deposit amount to the balance
-    await creditCard.save();  // Save the updated credit card
+    if (creditCard.balance < amount) {
+      return res.status(400).json({ error: "Insufficient balance" });
+    }
 
-    res.status(201).json(newDeposit);  // Respond with the new deposit
+    // Deduct from credit card balance
+    creditCard.balance -= amount;
+    await creditCard.save();
+
+    // Find or create savings account for the user
+    let savings = await Savings.findOne({ where: { userId } });
+    if (!savings) {
+      savings = await Savings.create({ userId, balance: 0 });
+    }
+
+    // Add money to savings
+    savings.balance += amount;
+    await savings.save();
+
+    return res.json({ message: "Deposit successful", newBalance: savings.balance });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error("Error processing deposit:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-// DELETE a deposit
-router.delete("/:id", authenticateToken, async (req, res) => {
+
+router.post("/withdraw", async (req, res) => {
+  const token = req.cookies.token; // Get JWT token from cookies
+
+  if (!token) {
+    return res.status(401).json({ error: "Unauthorized - No token provided" });
+  }
+
   try {
-    const deposit = await Deposit.findByPk(req.params.id);
-    if (!deposit) {
-      return res.status(404).json({ message: "Deposit not found" });
+    // Decode the token to get the user ID
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "default_secret");
+    const userId = decoded.id; // Extract user ID from the decoded token
+
+    const { creditCardId, amount } = req.body;
+
+    if (!creditCardId || !amount || amount <= 0) {
+      return res.status(400).json({ error: "Invalid input data" });
     }
-    await deposit.destroy();
-    res.json({ message: "Deposit deleted successfully" });
+
+    // Find the user's savings
+    const savings = await Savings.findOne({ where: { userId } });
+
+    if (!savings || savings.balance < amount) {
+      return res.status(400).json({ error: "Insufficient savings balance" });
+    }
+
+    // Find the credit card
+    const creditCard = await CreditCard.findOne({ where: { id: creditCardId, userId } });
+
+    if (!creditCard) {
+      return res.status(404).json({ error: "Credit card not found" });
+    }
+
+    // Deduct from savings balance
+    savings.balance -= amount;
+    await savings.save();
+
+    // Add money back to the credit card balance
+    creditCard.balance += amount;
+    await creditCard.save();
+
+    return res.json({
+      message: "Withdrawal successful",
+      newSavingsBalance: savings.balance,
+      newCreditCardBalance: creditCard.balance,
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Error processing withdrawal:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+
+// Get the total amount saved by the logged-in user
+router.get("/totalDeposits", async (req, res) => {
+  const token = req.cookies.token; // Extract token from cookies
+
+  if (!token) {
+    return res.status(401).json({ error: "Unauthorized - No token provided" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "default_secret");
+    const userId = decoded.id; // Extract userId from decoded token
+
+    // Fetch total deposits for the logged-in user
+    const savings = await Savings.findOne({ where: { userId } });
+
+    if (!savings) {
+      return res.json({ totalDeposits: 0 }); // Return 0 if user has no savings
+    }
+
+    return res.json({ totalDeposits: savings.balance });
+  } catch (error) {
+    console.error("Error fetching total deposits:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+router.get("/getSavings", async (req, res) => {
+  const token = req.cookies.token; // Extract JWT from cookies
+
+  if (!token) {
+    return res.status(401).json({ error: "Unauthorized - No token provided" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "default_secret");
+    const userId = decoded.id; // Extract userId from decoded token
+
+    // Fetch savings balance for the logged-in user
+    const savings = await Savings.findOne({ where: { userId } });
+
+    if (!savings) {
+      return res.json({ balance: 0 }); // If no savings exist, return 0
+    }
+
+    return res.json({ balance: savings.balance });
+  } catch (error) {
+    console.error("Error fetching savings balance:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 
 module.exports = router;

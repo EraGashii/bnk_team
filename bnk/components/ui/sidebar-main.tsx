@@ -36,7 +36,7 @@ const routes = [
   {
     label: "Savings",
     icon: PiggyBank,
-    href: "/savings",
+    href: "/home/savings",
     color: "text-pink-500",
     showInMobile: true,
   },

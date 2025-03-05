@@ -32,7 +32,7 @@ const authRoutes = require('./routes/auth')
 // Register Routes
 app.use("/user", userRouter);
 app.use('/transactions', transactionsRoutes);
-app.use("/api/deposits", depositsRouter);
+app.use("/deposit", depositsRouter);
 app.use('/auth', authRoutes);
 
 // Error Handling Middleware
