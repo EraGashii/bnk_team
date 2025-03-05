@@ -28,7 +28,7 @@ export default function UserDashboardComponent({ children }: { children: React.R
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/user">
+                  <Link href="/home">
                     <Home size={20} />
                     <span>Dashboard</span>
                   </Link>
@@ -36,7 +36,7 @@ export default function UserDashboardComponent({ children }: { children: React.R
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/user/transactions">
+                  <Link href="/home/transaction">
                     <CreditCard size={20} />
                     <span>Transactions</span>
                   </Link>

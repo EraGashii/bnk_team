@@ -3,7 +3,10 @@ module.exports = (sequelize, DataTypes) => {
     cardNumber: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true
+      unique: {
+        name: "unique_cardNumber",
+        msg: "Card number must be unique"
+      }
     },
     expirationDate: {
       type: DataTypes.STRING,

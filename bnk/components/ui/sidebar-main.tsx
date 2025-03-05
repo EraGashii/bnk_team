@@ -22,7 +22,7 @@ const routes = [
   {
     label: "Dashboard",
     icon: LayoutDashboard,
-    href: "/dashboard",
+    href: "/home",
     color: "text-sky-500",
     showInMobile: true,
   },
@@ -43,7 +43,7 @@ const routes = [
   {
     label: "Transfers",
     icon: ArrowLeftRight,
-    href: "/transfers",
+    href: "/home/transaction",
     color: "text-orange-500",
     showInMobile: true,
   },
