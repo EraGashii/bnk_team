@@ -27,9 +27,9 @@ const routes = [
     showInMobile: true,
   },
   {
-    label: "Accounts",
+    label: "Tax Forms",
     icon: CreditCard,
-    href: "/accounts",
+    href: "/home/tax",
     color: "text-violet-500",
     showInMobile: true,
   },

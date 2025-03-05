@@ -29,6 +29,7 @@ const transactionsRoutes = require('./routes/transactionsRoutes');
 const depositsRouter = require("./routes/depositsRoutes");
 const authRoutes = require('./routes/auth')
 const adminRoutes = require("./routes/adminRoutes"); // Import the new admin API
+const taxRoutes = require("./routes/taxPaymentsRoutes")
 
 // Register Routes
 app.use("/user", userRouter);
@@ -36,6 +37,7 @@ app.use('/transactions', transactionsRoutes);
 app.use("/deposit", depositsRouter);
 app.use('/auth', authRoutes);
 app.use("/admin", adminRoutes); // Register the admin routes
+app.use("/tax", taxRoutes);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {

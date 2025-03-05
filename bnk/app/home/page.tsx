@@ -1,16 +1,16 @@
-"use client";
-
-import { useEffect, useState } from "react";
+"use client"
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 
 import { CreditCardInfo } from "@/components/CreditCard";
 import { SpendingInfo } from "@/components/Spending-Info";
 import { SavingsInfo } from "@/components/Savings-Info";
-import { TransactionHistory } from "@/components/Transaction-History";
+import { TransactionChart } from "@/components/TransactionChart";
+import { SavingsChart } from "@/components/SavingsChart";
 
 export default function DashboardPage() {
-  const { isAuthenticated, loading, user } = useAuth(); // Ensure `user` is available in useAuth
+  const { isAuthenticated, loading, user } = useAuth();
   const router = useRouter();
 
   const [creditCard, setCreditCard] = useState(null);
@@ -31,7 +31,7 @@ export default function DashboardPage() {
   const fetchUserCreditCard = async () => {
     try {
       const response = await fetch("http://localhost:4000/transactions/getcc", {
-        credentials: "include", // Ensures cookies are sent if using JWT stored in cookies
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -40,7 +40,6 @@ export default function DashboardPage() {
 
       const data = await response.json();
 
-      // Ensure the credit card belongs to the logged-in user
       if (data.userId === user?.id) {
         setCreditCard(data);
       } else {
@@ -72,8 +71,18 @@ export default function DashboardPage() {
 
         <SpendingInfo />
         <SavingsInfo />
+        
+        {/* Transaction Chart - Past Month */}
+        <div className="lg:col-span-2">
+          <TransactionChart />
+        </div>
+        
+        {/* Savings Distribution Chart */}
+        <div>
+          <SavingsChart />
+        </div>
+
         <div className="md:col-span-2 lg:col-span-3">
-          <TransactionHistory />
         </div>
       </div>
     </div>

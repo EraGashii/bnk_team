@@ -13,7 +13,7 @@ export function SpendingInfo() {
 
   const fetchTransactions = async () => {
     try {
-      const response = await fetch("http://localhost:4000/transactions", {
+      const response = await fetch("http://localhost:4000/transactions/user", {
         credentials: "include",
       });
 
