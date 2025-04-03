@@ -8,6 +8,8 @@ const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.json')[env];
 const db = {};
+console.log("Loaded models:", Object.keys(db));
+
 
 let sequelize;
 if (config.use_env_variable) {
@@ -27,10 +29,15 @@ fs
     );
   })
   .forEach(file => {
+    console.log(file)
     const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
     db[model.name] = model;
   });
 
+  if (db.Team && db.Player) {
+    db.Team.hasMany(db.Player, { foreignKey: "TeamId" });
+    db.Player.belongsTo(db.Team, { foreignKey: "TeamId" });
+  }
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
