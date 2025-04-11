@@ -27,6 +27,7 @@ const authRoutes = require('./routes/auth');
 const adminRoutes = require("./routes/adminRoutes");
 const taxRoutes = require("./routes/taxPaymentsRoutes");
 const teamPlayerRoutes = require("./routes/teamPlayersRoutes");
+const EmployeeContractRoutes =require("./routes/EmployeeContractRoutes")
 
 // ✅ Register Routes  
 app.use("/user", userRouter);
@@ -34,8 +35,9 @@ app.use('/transactions', transactionsRoutes);
 app.use("/deposit", depositsRouter);
 app.use('/auth', authRoutes);
 app.use("/admin", adminRoutes);
-app.use("/tax", taxRoutes);
-app.use("/api", teamPlayerRoutes);  // ✅ Ensure /api is used
+app.use("/tax", taxRoutes);  // ✅ Ensure /api is used
+app.use("/api", EmployeeContractRoutes); 
+// app.use("/api", teamPlayerRoutes);
 
 // ✅ Error Handling Middleware
 app.use((err, req, res, next) => {

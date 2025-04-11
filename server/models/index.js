@@ -38,6 +38,11 @@ fs
     db.Team.hasMany(db.Player, { foreignKey: "TeamId" });
     db.Player.belongsTo(db.Team, { foreignKey: "TeamId" });
   }
+
+  if (db.Employee && db.Contract) {
+    db.Employee.hasMany(db.Contract, { foreignKey: "EmployeeId" });
+    db.Contract.belongsTo(db.Employee, { foreignKey: "EmployeeId" });
+  }
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
