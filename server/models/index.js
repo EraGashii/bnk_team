@@ -43,6 +43,11 @@ fs
     db.Employee.hasMany(db.Contract, { foreignKey: "EmployeeId" });
     db.Contract.belongsTo(db.Employee, { foreignKey: "EmployeeId" });
   }
+  if (db.Ligjeruesi && db.Ligjerata) {
+    db.Ligjeruesi.hasMany(db.Ligjerata, { foreignKey: "LecturerId" });
+    db.Ligjerata.belongsTo(db.Ligjeruesi, { foreignKey: "LecturerId" });
+  }
+  
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);

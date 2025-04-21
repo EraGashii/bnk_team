@@ -47,8 +47,8 @@ export default function AdminNavigationComponent({ children }: { children: React
                     <span>Transactions</span>
                   </Link>
                 </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
+           </SidebarMenuItem>
+               <SidebarMenuItem>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
@@ -57,6 +57,14 @@ export default function AdminNavigationComponent({ children }: { children: React
                     <span>Tax Payments</span>
                   </Link>
               </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/admin/crud">
+                    <Users size={20} />
+                    <span>Crud</span>
+                  </Link>
+                </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
               </SidebarMenuItem>

@@ -1,32 +1,24 @@
 module.exports = (sequelize, DataTypes) => {
-    const Player = sequelize.define("Player", {
-        id: {
+    const Ligjerata = sequelize.define("Ligjerata", {
+        LectureId: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
             allowNull: false,
         },
-        Name: {
+        LectureName: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        Number: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        BirthYear: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        TeamId: {
+        LecturerId: {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: "Teams",
-                key: "TeamId",
+                model: "Ligjeruesis",
+                key: "LecturerId",
             },
         },
     }, { timestamps: false });
 
-    return Player;
+    return Ligjerata;
 };

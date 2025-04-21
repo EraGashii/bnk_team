@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
     const Team = sequelize.define("Team", {
-        id: {
+        TeamId: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         },
     }, {
+        tableName: "Teams",
         timestamps: false
     });
 

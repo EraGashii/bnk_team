@@ -35,7 +35,7 @@ router.put("/teams/:id", async (req, res) => {
   const { Name } = req.body;
   if (!Name) return res.status(400).json({ error: "Team name is required" });
   try {
-    const [updated] = await Team.update({ Name }, { where: { id } });
+    const [updated] = await Team.update({ Name }, { where: {TeamId:id } });
     if (!updated) return res.status(404).json({ error: "Team not found" });
     res.json({ message: "Team updated" });
   } catch (error) {
@@ -44,14 +44,23 @@ router.put("/teams/:id", async (req, res) => {
 });
 
 router.delete("/teams/:id", async (req, res) => {
+  const teamId = Number(req.params.id); // ✅ this line fixes the error
+
   try {
-    const deleted = await Team.destroy({ where: { id: req.params.id } });
+    // Optional if you don't have ON DELETE CASCADE
+    await Player.destroy({ where: { TeamId: teamId } });
+
+    const deleted = await Team.destroy({ where: { TeamId: teamId } });
+
     if (!deleted) return res.status(404).json({ error: "Team not found" });
-    res.json({ message: "Team deleted" });
+
+    res.json({ message: "Team deleted successfully" });
   } catch (error) {
-    handleError(res, error);
+    console.error("❌ Error deleting team:", error);
+    res.status(500).json({ error: error.message || "Failed to delete team" });
   }
 });
+
 
 // ✅ PLAYERS
 router.get("/players", async (_, res) => {

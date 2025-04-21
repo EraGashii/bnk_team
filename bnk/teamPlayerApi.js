@@ -5,7 +5,7 @@ const API_URL = "http://localhost:4000/api";
 const api = axios.create({ baseURL: API_URL });
 
 // 🧠 TEAM
-export const fetchTeams = async () => (await api.get("/teams")).data;
+export const fetchteams = async () => (await api.get("/teams")).data;
 export const addTeam = async (name) => api.post("/teams", { Name: name });
 export const updateTeam = async (id, name) => api.put(`/teams/${id}`, { Name: name });
 export const deleteTeam = async (id) => api.delete(`/teams/${id}`);
