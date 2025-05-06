@@ -67,6 +67,22 @@ export default function AdminNavigationComponent({ children }: { children: React
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/admin/crud2">
+                    <Users size={20} />
+                    <span>Crud2</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/admin/crud3">
+                    <Users size={20} />
+                    <span>Crud3</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>

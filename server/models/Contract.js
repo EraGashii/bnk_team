@@ -1,20 +1,23 @@
+const { DESCRIBE } = require("sequelize/lib/query-types");
+
 module.exports = (sequelize, DataTypes) => {
     const Contract = sequelize.define("Contract", {
-        id: {
+        Id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
             allowNull: false,
         },
-        Title: {
+       Title: {
             type: DataTypes.STRING,
             allowNull: false,
         },
         Description: {
             type: DataTypes.STRING,
             allowNull: false,
-        },
-        EmployeeId: {
+            defaultValue: false
+          },          
+          EmployeeId: {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {

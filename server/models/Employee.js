@@ -1,21 +1,22 @@
 module.exports = (sequelize, DataTypes) => {
     const Employee = sequelize.define("Employee", {
-        EmployeeId: {
+     EmployeeId  : {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
         },
-        Name: {
+      Name: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        Surname: {
+      Surname: {
             type: DataTypes.STRING,
             allowNull: false,
-        },
+        },          
     }, {
+        tableName: "Employees",
         timestamps: false
     });
 
-    return  Employee;
+    return Employee;
 };

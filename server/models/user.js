@@ -10,9 +10,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     email: {
       type: DataTypes.STRING,
-      unique: true,
       allowNull: false,
-    },
+      unique: {
+        name: 'email', // 👈 avoid creating new indexes on every sync
+        msg: 'Email must be unique'
+      }
+    },    
     password: {
       type: DataTypes.STRING,
       allowNull: false
