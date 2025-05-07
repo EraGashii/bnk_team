@@ -1,0 +1,32 @@
+module.exports = (sequelize, DataTypes) => {
+    const Planet = sequelize.define("Planet", {
+         Id:{
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true,
+            allowNull: false,
+        },
+        Name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        Number: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        BirthYear: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        SateliteId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: "Satelites",
+                key: "SateliteId",
+            },
+        },
+    }, { timestamps: false });
+
+    return Planet;
+};
